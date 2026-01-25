@@ -16,7 +16,7 @@ jobs:
           python-version: '3.11'
 
       - run: pip install ruff
-      - run: ruff check rapid-roots/
+      - run: ruff check src/
 
   format:
     name: Checks Formatting
