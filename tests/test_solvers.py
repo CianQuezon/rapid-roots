@@ -12,7 +12,7 @@ import pytest
 from numba import njit
 from scipy import optimize
 
-from meteorological_equations.math.solvers._solvers import (
+from rapid_roots.solvers._solvers import (
     BisectionSolver,
     BrentSolver,
     NewtonRaphsonSolver,

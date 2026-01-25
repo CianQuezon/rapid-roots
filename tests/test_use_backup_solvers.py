@@ -14,10 +14,10 @@ import pytest
 from numba import njit
 from scipy.optimize import bisect, brentq, newton, root_scalar
 
-from meteorological_equations.math.solvers._back_up_logic import (
+from rapid_roots.solvers._back_up_logic import (
     _use_back_up_solvers,
 )
-from meteorological_equations.math.solvers._enums import SolverName
+from rapid_roots.solvers._enums import SolverName
 
 # ============================================================================
 # Test Functions (JIT-compiled for compatibility)

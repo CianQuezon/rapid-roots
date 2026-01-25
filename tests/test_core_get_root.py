@@ -21,7 +21,7 @@ from numba import njit
 from numpy.testing import assert_allclose
 from scipy.optimize import bisect, brentq, newton
 
-from meteorological_equations.math.solvers.core import RootSolvers
+from rapid_roots.solvers.core import RootSolvers
 
 # ============================================================================
 # Test Functions

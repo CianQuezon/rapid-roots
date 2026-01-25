@@ -9,9 +9,9 @@ import pytest
 from numba import njit
 from scipy.optimize import brentq, newton
 
-from meteorological_equations.math.solvers._codegen import generate_vectorised_solver
-from meteorological_equations.math.solvers._enums import MethodType
-from meteorological_equations.math.solvers._jit_solvers import (
+from rapid_roots.solvers._codegen import generate_vectorised_solver
+from rapid_roots.solvers._enums import MethodType
+from rapid_roots.solvers._jit_solvers import (
     _bisection_scalar,
     _brent_scalar,
     _newton_raphson_scalar,

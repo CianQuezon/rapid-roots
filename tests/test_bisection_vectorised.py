@@ -11,7 +11,7 @@ import pytest
 from numba import njit
 from scipy.optimize import brentq
 
-from meteorological_equations.math.solvers._jit_solvers import _bisection_vectorised
+from rapid_roots.solvers._jit_solvers import _bisection_vectorised
 
 
 class TestBisectionVectorised:

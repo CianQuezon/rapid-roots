@@ -14,10 +14,10 @@ import pytest
 from numba import njit
 from scipy import optimize
 
-from meteorological_equations.math.solvers._back_up_logic import (
+from rapid_roots.solvers._back_up_logic import (
     _try_back_up_bracket_vectorised,
 )
-from meteorological_equations.math.solvers._solvers import (
+from rapid_roots.solvers._solvers import (
     BisectionSolver,
     BrentSolver,
 )

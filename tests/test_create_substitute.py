@@ -17,7 +17,7 @@ import numpy as np
 import pytest
 from numpy.testing import assert_array_equal
 
-from meteorological_equations.math.solvers.core import RootSolvers
+from rapid_roots.solvers.core import RootSolvers
 
 
 class TestCreateSubstituteResultsScalar:

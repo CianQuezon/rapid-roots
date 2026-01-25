@@ -9,7 +9,7 @@ Author: Cian Quezon
 import numpy as np
 import pytest
 
-from meteorological_equations.math.solvers._jit_solvers import _validate_and_prepare_params
+from rapid_roots.solvers._jit_solvers import _validate_and_prepare_params
 
 
 class TestValidateAndPrepareParams:

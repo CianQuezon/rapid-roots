@@ -14,12 +14,12 @@ import pytest
 from numba import njit
 from scipy import optimize
 
-from meteorological_equations.math.solvers._back_up_logic import (
+from rapid_roots.solvers._back_up_logic import (
     _get_unconverged_func_params,
     _try_back_up_open_vectorised,
     _update_converged_results,
 )
-from meteorological_equations.math.solvers._solvers import (
+from rapid_roots.solvers._solvers import (
     NewtonRaphsonSolver,
 )
 

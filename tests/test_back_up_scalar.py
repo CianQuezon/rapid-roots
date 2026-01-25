@@ -14,8 +14,8 @@ import pytest
 from numba import njit
 from scipy import optimize
 
-from meteorological_equations.math.solvers._back_up_logic import _try_back_up_scalar
-from meteorological_equations.math.solvers._enums import SolverName
+from rapid_roots.solvers._back_up_logic import _try_back_up_scalar
+from rapid_roots.solvers._enums import SolverName
 
 # =============================================================================
 # NUMBA-COMPATIBLE TEST FUNCTIONS
