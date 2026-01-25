@@ -456,7 +456,9 @@ class RootSolvers:
 
                     else:
                         roots, iterations, converged_flags = results
-                        bracket_roots, bracket_iterations, bracket_converged_flags = bracket_results
+                        bracket_roots, bracket_iterations, bracket_converged_flags = (
+                            bracket_results
+                        )
 
                         open_roots_arr = np.asarray(roots, dtype=np.float64)
 
@@ -465,7 +467,9 @@ class RootSolvers:
                                 results = bracket_results
 
                         else:
-                            unconverged_idx = np.where(np.logical_not(converged_flags))[0]
+                            unconverged_idx = np.where(np.logical_not(converged_flags))[
+                                0
+                            ]
 
                             if len(unconverged_idx) > 0:
                                 _update_converged_results(
@@ -474,8 +478,12 @@ class RootSolvers:
                                     converged_flag=converged_flags,
                                     unconverged_idx=unconverged_idx,
                                     updated_roots=bracket_roots[unconverged_idx],
-                                    updated_iterations=bracket_iterations[unconverged_idx],
-                                    updated_converged_flag=bracket_converged_flags[unconverged_idx],
+                                    updated_iterations=bracket_iterations[
+                                        unconverged_idx
+                                    ],
+                                    updated_converged_flag=bracket_converged_flags[
+                                        unconverged_idx
+                                    ],
                                 )
 
                                 results = (roots, iterations, converged_flags)
@@ -506,7 +514,12 @@ class RootSolvers:
         elif method_type == MethodType.BRACKET:
             try:
                 results = solver.find_root(
-                    func=func, a=a, b=b, func_params=func_params, tol=tol, max_iter=max_iter
+                    func=func,
+                    a=a,
+                    b=b,
+                    func_params=func_params,
+                    tol=tol,
+                    max_iter=max_iter,
                 )
 
             except Exception as e:
@@ -522,7 +535,9 @@ class RootSolvers:
                 stacklevel=2,
             )
 
-            results = RootSolvers._create_substitute_results(x0=x0, a=a, b=b, max_iter=max_iter)
+            results = RootSolvers._create_substitute_results(
+                x0=x0, a=a, b=b, max_iter=max_iter
+            )
 
         _, _, converged_flags = results
 
@@ -551,7 +566,9 @@ class RootSolvers:
         a: Optional[Union[float, npt.ArrayLike]] = None,
         b: Optional[Union[float, npt.ArrayLike]] = None,
         max_iter: int = 100,
-    ) -> Tuple[Union[float, npt.NDArray], Union[int, npt.NDArray], Union[bool, npt.NDArray]]:
+    ) -> Tuple[
+        Union[float, npt.NDArray], Union[int, npt.NDArray], Union[bool, npt.NDArray]
+    ]:
         """
 
         Create substitute unconverged results when primary solver fails completely.
@@ -726,4 +743,6 @@ class RootSolvers:
                 )
             return func_params
         else:
-            raise ValueError(f"func_params must be 0D, 1D, or 2D, got {func_params.ndim}D")
+            raise ValueError(
+                f"func_params must be 0D, 1D, or 2D, got {func_params.ndim}D"
+            )

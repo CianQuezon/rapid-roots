@@ -123,7 +123,9 @@ class TestTryBackupBracketVectorised:
         # Verify
         assert success, "Should return True if any converged"
         assert np.all(converged), "All should have converged"
-        assert np.allclose(roots, 2.0, atol=1e-5), f"All roots should be near 2.0, got {roots}"
+        assert np.allclose(roots, 2.0, atol=1e-5), (
+            f"All roots should be near 2.0, got {roots}"
+        )
 
     def test_partial_convergence(self):
         """Test case where only some elements converge"""
@@ -200,7 +202,10 @@ class TestTryBackupBracketVectorised:
 
         # SciPy reference (brentq)
         scipy_roots = np.array(
-            [optimize.brentq(cubic_minus_8_scipy, a, b, xtol=1e-10) for a, b in zip(a_arr, b_arr)]
+            [
+                optimize.brentq(cubic_minus_8_scipy, a, b, xtol=1e-10)
+                for a, b in zip(a_arr, b_arr)
+            ]
         )
 
         # Compare precision
@@ -242,7 +247,10 @@ class TestTryBackupBracketVectorised:
 
         # SciPy reference (bisect)
         scipy_roots = np.array(
-            [optimize.bisect(cubic_minus_8_scipy, a, b, xtol=1e-8) for a, b in zip(a_arr, b_arr)]
+            [
+                optimize.bisect(cubic_minus_8_scipy, a, b, xtol=1e-8)
+                for a, b in zip(a_arr, b_arr)
+            ]
         )
 
         print("\nBisection:")
@@ -257,8 +265,18 @@ class TestTryBackupBracketVectorised:
         """Test with different mathematical functions"""
         test_cases = [
             (cubic_minus_8, np.array([0.0, 0.5, 1.0]), np.array([3.0, 3.0, 3.0]), 2.0),
-            (exponential_minus_e, np.array([0.0, 0.5, 0.8]), np.array([2.0, 2.0, 1.5]), 1.0),
-            (sin_function, np.array([3.0, 3.1, 3.05]), np.array([3.5, 3.3, 3.2]), np.pi),
+            (
+                exponential_minus_e,
+                np.array([0.0, 0.5, 0.8]),
+                np.array([2.0, 2.0, 1.5]),
+                1.0,
+            ),
+            (
+                sin_function,
+                np.array([3.0, 3.1, 3.05]),
+                np.array([3.5, 3.3, 3.2]),
+                np.pi,
+            ),
             (log_function, np.array([1.0, 1.5, 2.0]), np.array([4.0, 4.0, 4.0]), np.e),
         ]
 
@@ -490,7 +508,9 @@ class TestTryBackupBracketVectorised:
         )
 
         assert success
-        assert np.all(converged), f"Expected all to converge, got {np.sum(converged)}/{n}"
+        assert np.all(converged), (
+            f"Expected all to converge, got {np.sum(converged)}/{n}"
+        )
         assert np.allclose(roots, 2.0, atol=1e-5)
 
     def test_narrow_brackets(self):
@@ -589,7 +609,10 @@ class TestTryBackupBracketVectorised:
 
             # SciPy implementation (brentq)
             scipy_roots = np.array(
-                [optimize.brentq(func_scipy, a, b, xtol=1e-10) for a, b in zip(a_arr, b_arr)]
+                [
+                    optimize.brentq(func_scipy, a, b, xtol=1e-10)
+                    for a, b in zip(a_arr, b_arr)
+                ]
             )
 
             # Compare
@@ -602,7 +625,9 @@ class TestTryBackupBracketVectorised:
             print(f"  Match:       {'✓' if max_diff < 1e-8 else '✗'}")
 
             assert np.all(converged), f"{name}: Not all converged"
-            assert np.allclose(roots, scipy_roots, atol=1e-8), f"{name}: Precision mismatch"
+            assert np.allclose(roots, scipy_roots, atol=1e-8), (
+                f"{name}: Precision mismatch"
+            )
 
         print("\n" + "=" * 80)
         print("ALL TESTS PASSED ✓")

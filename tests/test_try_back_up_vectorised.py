@@ -161,7 +161,9 @@ class TestBasicFunctionality:
 
         # Verify against SciPy
         scipy_roots = np.array([brentq(cubic_func, a[i], b[i]) for i in range(n)])
-        assert np.allclose(roots, scipy_roots, atol=1e-8), "Results should match SciPy brentq"
+        assert np.allclose(roots, scipy_roots, atol=1e-8), (
+            "Results should match SciPy brentq"
+        )
 
     def test_partial_convergence_preservation(self, default_tolerance, max_iterations):
         """Test that already-converged elements are preserved."""
@@ -294,7 +296,10 @@ class TestSciPyValidation:
 
         # SciPy reference
         scipy_roots = np.array(
-            [bisect(quadratic_func, a[i], b[i], xtol=default_tolerance) for i in range(n)]
+            [
+                bisect(quadratic_func, a[i], b[i], xtol=default_tolerance)
+                for i in range(n)
+            ]
         )
 
         assert np.all(conv), "All should converge"
@@ -326,7 +331,10 @@ class TestSciPyValidation:
 
         # SciPy reference
         scipy_roots = np.array(
-            [newton(cubic_func, x0[i], fprime=cubic_prime, tol=strict_tolerance) for i in range(n)]
+            [
+                newton(cubic_func, x0[i], fprime=cubic_prime, tol=strict_tolerance)
+                for i in range(n)
+            ]
         )
 
         assert np.all(conv), "All should converge"
@@ -500,7 +508,9 @@ class TestParametricFunctions:
         # All should converge to root at x=2
         assert np.allclose(roots, 2.0, atol=default_tolerance)
 
-    def test_partial_convergence_with_parameters(self, default_tolerance, max_iterations):
+    def test_partial_convergence_with_parameters(
+        self, default_tolerance, max_iterations
+    ):
         """Test parameter extraction with partial convergence."""
         roots = np.array([2.0, np.nan, np.nan, 1.5])
         iters = np.array([5, 100, 100, 8])
@@ -878,7 +888,10 @@ class TestLargeScale:
         n_converged_final = np.sum(conv)
 
         # Most should converge
-        assert n_converged_final >= n_unconverged_initial * 0.95 + n - n_unconverged_initial
+        assert (
+            n_converged_final
+            >= n_unconverged_initial * 0.95 + n - n_unconverged_initial
+        )
 
 
 # ============================================================================
@@ -1022,7 +1035,9 @@ class TestWarningsAndErrors:
             )
 
             # Should warn about missing x0
-            assert any("requires initial guess" in str(warning.message) for warning in w)
+            assert any(
+                "requires initial guess" in str(warning.message) for warning in w
+            )
 
 
 # ============================================================================

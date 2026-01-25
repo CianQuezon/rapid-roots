@@ -15,7 +15,9 @@ from rapid_roots.shared._enum_tools import parse_enum
 
 
 def generate_vectorised_solver(
-    scalar_func: Callable[[float], float], num_params: int, method_type: Union[MethodType, str]
+    scalar_func: Callable[[float], float],
+    num_params: int,
+    method_type: Union[MethodType, str],
 ) -> Callable[[npt.ArrayLike], npt.NDArray[np.float64]]:
     """
     Generate a JIT-compiled vectorised solver from a scalar solver function.

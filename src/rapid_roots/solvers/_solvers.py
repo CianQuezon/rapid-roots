@@ -310,7 +310,9 @@ class Solver(ABC):
         if initial_guess_arr.ndim == 0:
             params = self._prepare_scalar_params(func_params=func_params)
             if func_prime is not None:
-                return scalar_open_method_func(func, func_prime, x0, tol, max_iter, *params)
+                return scalar_open_method_func(
+                    func, func_prime, x0, tol, max_iter, *params
+                )
             else:
                 return scalar_open_method_func(func, x0, tol, max_iter, *params)
 
@@ -329,7 +331,11 @@ class Solver(ABC):
                 )
             else:
                 roots, iterations, converged_flags = vectorised_open_method_func(
-                    func=func, x0=x0_flatten, func_params=func_params, tol=tol, max_iter=max_iter
+                    func=func,
+                    x0=x0_flatten,
+                    func_params=func_params,
+                    tol=tol,
+                    max_iter=max_iter,
                 )
 
             roots = np.asarray(roots, dtype=np.float64)

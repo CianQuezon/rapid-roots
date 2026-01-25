@@ -80,7 +80,9 @@ class TestBrentVectorised:
         )
 
         # Compare with scipy
-        expected = np.array([brentq(lambda x, k=k: x**3 - k, 0.0, 10.0) for k in k_values])
+        expected = np.array(
+            [brentq(lambda x, k=k: x**3 - k, 0.0, 10.0) for k in k_values]
+        )
 
         assert np.all(converged)
         assert np.allclose(roots, expected, atol=1e-8)
@@ -109,7 +111,11 @@ class TestBrentVectorised:
         # Compare with scipy
         expected = np.array(
             [
-                brentq(lambda x, i=i: a_values[i] * x**3 - b_values[i], a_bounds[i], b_bounds[i])
+                brentq(
+                    lambda x, i=i: a_values[i] * x**3 - b_values[i],
+                    a_bounds[i],
+                    b_bounds[i],
+                )
                 for i in range(n)
             ]
         )
@@ -146,7 +152,11 @@ class TestBrentVectorised:
         expected = np.array(
             [
                 brentq(
-                    lambda x, i=i: params[i, 0] * x**3 + params[i, 1] * x + params[i, 2], a[i], b[i]
+                    lambda x, i=i: params[i, 0] * x**3
+                    + params[i, 1] * x
+                    + params[i, 2],
+                    a[i],
+                    b[i],
                 )
                 for i in range(len(params))
             ]
@@ -418,7 +428,11 @@ class TestBrentVectorised:
         # Compare with scipy
         expected = np.array(
             [
-                brentq(lambda x, i=i: amplitudes[i] * np.sin(x) - offsets[i], 0.0, np.pi / 2)
+                brentq(
+                    lambda x, i=i: amplitudes[i] * np.sin(x) - offsets[i],
+                    0.0,
+                    np.pi / 2,
+                )
                 for i in range(5)
             ]
         )

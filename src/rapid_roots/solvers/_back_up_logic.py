@@ -18,7 +18,9 @@ from rapid_roots.shared._enum_tools import parse_enum
 
 def _use_back_up_solvers(
     func: Callable[[float], float],
-    results: Union[Tuple[float, int, bool], Tuple[npt.NDArray, npt.NDArray, npt.NDArray]],
+    results: Union[
+        Tuple[float, int, bool], Tuple[npt.NDArray, npt.NDArray, npt.NDArray]
+    ],
     a: Optional[Union[npt.ArrayLike, float]],
     b: Optional[Union[npt.ArrayLike, float]],
     x0: Optional[Union[npt.ArrayLike, float]],
@@ -273,7 +275,12 @@ def _try_back_up_scalar(
             if a is not None and b is not None:
                 try:
                     results = back_up_solver.find_root(
-                        func=func, a=a, b=b, func_params=func_params, tol=tol, max_iter=max_iter
+                        func=func,
+                        a=a,
+                        b=b,
+                        func_params=func_params,
+                        tol=tol,
+                        max_iter=max_iter,
                     )
                     converged_flag = results[2]
                     if converged_flag:
@@ -292,7 +299,12 @@ def _try_back_up_scalar(
         elif method_type == MethodType.BRACKET:
             try:
                 results = back_up_solver.find_root(
-                    func=func, a=a, b=b, func_params=func_params, tol=tol, max_iter=max_iter
+                    func=func,
+                    a=a,
+                    b=b,
+                    func_params=func_params,
+                    tol=tol,
+                    max_iter=max_iter,
                 )
 
                 converged_flag = results[2]
@@ -308,7 +320,8 @@ def _try_back_up_scalar(
 
             except Exception as e:
                 warnings.warn(
-                    f"Bracketing method failed: {e}. Skipping to the next solver.", stacklevel=2
+                    f"Bracketing method failed: {e}. Skipping to the next solver.",
+                    stacklevel=2,
                 )
                 continue
 
@@ -334,12 +347,15 @@ def _try_back_up_scalar(
 
             except Exception as e:
                 warnings.warn(
-                    f"Open method failed: {e}. Skipping to the next solver.", stacklevel=2
+                    f"Open method failed: {e}. Skipping to the next solver.",
+                    stacklevel=2,
                 )
                 continue
 
         else:
-            warnings.warn("Unknown method type. Skipping to the next solver", stacklevel=2)
+            warnings.warn(
+                "Unknown method type. Skipping to the next solver", stacklevel=2
+            )
 
     return results
 
@@ -693,13 +709,15 @@ def _try_back_up_bracket_vectorised(
             func_params=func_params, unconverged_idx=unconverged_idx
         )
 
-        updated_roots, updated_iterations, updated_converged_flag = backup_solver.find_root(
-            func=func,
-            a=a_unconverged,
-            b=b_unconverged,
-            func_params=func_params_unconverged,
-            tol=tol,
-            max_iter=max_iter,
+        updated_roots, updated_iterations, updated_converged_flag = (
+            backup_solver.find_root(
+                func=func,
+                a=a_unconverged,
+                b=b_unconverged,
+                func_params=func_params_unconverged,
+                tol=tol,
+                max_iter=max_iter,
+            )
         )
 
         _update_converged_results(
@@ -715,7 +733,9 @@ def _try_back_up_bracket_vectorised(
         return np.any(updated_converged_flag)
 
     except Exception as e:
-        warnings.warn(f"Bracketing method failed: {e}. Skipping to the next solver.", stacklevel=2)
+        warnings.warn(
+            f"Bracketing method failed: {e}. Skipping to the next solver.", stacklevel=2
+        )
         return False
 
 
@@ -842,13 +862,15 @@ def _try_back_up_open_vectorised(
             func_params=func_params, unconverged_idx=unconverged_idx
         )
 
-        updated_roots, updated_iterations, updated_converged_flag = backup_solver.find_root(
-            func=func,
-            func_prime=func_prime,
-            x0=x0_unconverged,
-            func_params=func_params_unconverged,
-            tol=tol,
-            max_iter=max_iter,
+        updated_roots, updated_iterations, updated_converged_flag = (
+            backup_solver.find_root(
+                func=func,
+                func_prime=func_prime,
+                x0=x0_unconverged,
+                func_params=func_params_unconverged,
+                tol=tol,
+                max_iter=max_iter,
+            )
         )
 
         _update_converged_results(
@@ -869,7 +891,8 @@ def _try_back_up_open_vectorised(
 
 
 def _get_unconverged_func_params(
-    func_params: Optional[Union[npt.ArrayLike, Tuple[float, ...]]], unconverged_idx: npt.ArrayLike
+    func_params: Optional[Union[npt.ArrayLike, Tuple[float, ...]]],
+    unconverged_idx: npt.ArrayLike,
 ) -> Optional[npt.NDArray]:
     """
     Extract function parameters for unconverged elements only.
@@ -1131,5 +1154,7 @@ def _update_converged_results(
     updated_converged_original_idx = unconverged_idx[updated_converged_mask]
 
     roots[updated_converged_original_idx] = updated_roots[updated_converged_mask]
-    iterations[updated_converged_original_idx] = updated_iterations[updated_converged_mask]
+    iterations[updated_converged_original_idx] = updated_iterations[
+        updated_converged_mask
+    ]
     converged_flag[updated_converged_original_idx] = True

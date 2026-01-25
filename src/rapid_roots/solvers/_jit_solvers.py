@@ -188,7 +188,9 @@ def _newton_raphson_vectorised(
     )
 
     solver = generate_vectorised_solver(
-        scalar_func=_newton_raphson_scalar, num_params=num_params, method_type=MethodType.OPEN
+        scalar_func=_newton_raphson_scalar,
+        num_params=num_params,
+        method_type=MethodType.OPEN,
     )
 
     return solver(func, func_prime, func_params, x0, tol, max_iter)
@@ -381,7 +383,9 @@ def _bisection_vectorised(
     )
 
     solver = generate_vectorised_solver(
-        scalar_func=_bisection_scalar, num_params=num_params, method_type=MethodType.BRACKET
+        scalar_func=_bisection_scalar,
+        num_params=num_params,
+        method_type=MethodType.BRACKET,
     )
 
     return solver(func, func_params, a, b, tol, max_iter)

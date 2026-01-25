@@ -216,7 +216,9 @@ class TestTryBackupOpenVectorised:
         # SciPy reference
         scipy_roots = np.array(
             [
-                optimize.newton(transcendental_scipy, x0, fprime=lambda x: 1 + np.sin(x), tol=1e-10)
+                optimize.newton(
+                    transcendental_scipy, x0, fprime=lambda x: 1 + np.sin(x), tol=1e-10
+                )
                 for x0 in x0_arr
             ]
         )
@@ -440,7 +442,9 @@ class TestTryBackupOpenVectorised:
         )
 
         assert success
-        assert np.all(converged), f"Expected all to converge, got {np.sum(converged)}/{n}"
+        assert np.all(converged), (
+            f"Expected all to converge, got {np.sum(converged)}/{n}"
+        )
         assert np.allclose(roots, 2.0, atol=1e-5)
 
     def test_comparison_comprehensive_scipy(self):
@@ -502,7 +506,10 @@ class TestTryBackupOpenVectorised:
             # SciPy implementation
             if func_prime is not None:
                 scipy_roots = np.array(
-                    [optimize.newton(func_scipy, x0, fprime=func_prime, tol=1e-10) for x0 in x0_arr]
+                    [
+                        optimize.newton(func_scipy, x0, fprime=func_prime, tol=1e-10)
+                        for x0 in x0_arr
+                    ]
                 )
             else:
                 scipy_roots = np.array(
@@ -519,7 +526,9 @@ class TestTryBackupOpenVectorised:
             print(f"  Match:       {'✓' if max_diff < 1e-8 else '✗'}")
 
             assert np.all(converged), f"{name}: Not all converged"
-            assert np.allclose(roots, scipy_roots, atol=1e-8), f"{name}: Precision mismatch"
+            assert np.allclose(roots, scipy_roots, atol=1e-8), (
+                f"{name}: Precision mismatch"
+            )
 
         print("\n" + "=" * 80)
         print("ALL TESTS PASSED ✓")
