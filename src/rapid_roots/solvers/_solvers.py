@@ -10,8 +10,8 @@ from typing import Callable, Optional, Tuple, Union
 import numpy as np
 import numpy.typing as npt
 
-from meteorological_equations.math.solvers._enums import MethodType, SolverName
-from meteorological_equations.math.solvers._jit_solvers import (
+from rapid_roots.solvers._enums import MethodType, SolverName
+from rapid_roots.solvers._jit_solvers import (
     _bisection_scalar,
     _bisection_vectorised,
     _brent_scalar,

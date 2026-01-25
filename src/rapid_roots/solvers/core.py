@@ -10,13 +10,13 @@ from typing import Callable, List, Optional, Tuple, Union
 import numpy as np
 import numpy.typing as npt
 
-from meteorological_equations.math.solvers._back_up_logic import (
+from rapid_roots.solvers._back_up_logic import (
     _update_converged_results,
     _use_back_up_solvers,
 )
-from meteorological_equations.math.solvers._enums import MethodType, SolverName
-from meteorological_equations.math.solvers._types import SolverMap
-from meteorological_equations.shared._enum_tools import parse_enum
+from rapid_roots.solvers._enums import MethodType, SolverName
+from rapid_roots.solvers._types import SolverMap
+from rapid_roots.shared._enum_tools import parse_enum
 
 
 class RootSolvers:
