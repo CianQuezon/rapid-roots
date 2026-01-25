@@ -5,21 +5,21 @@ Author: Cian Quezon
 """
 
 import warnings
-from typing import Callable, List, Optional, Tuple, Union
+from typing import Callable, Optional, Union
 
 import numpy as np
 import numpy.typing as npt
 
+from rapid_roots.shared._enum_tools import parse_enum
 from rapid_roots.solvers._enums import MethodType, SolverName
 from rapid_roots.solvers._solvers import Solver
 from rapid_roots.solvers._types import SolverMap
-from rapid_roots.shared._enum_tools import parse_enum
 
 
 def _use_back_up_solvers(
     func: Callable[[float], float],
     results: Union[
-        Tuple[float, int, bool], Tuple[npt.NDArray, npt.NDArray, npt.NDArray]
+        tuple[float, int, bool], tuple[npt.NDArray, npt.NDArray, npt.NDArray]
     ],
     a: Optional[Union[npt.ArrayLike, float]],
     b: Optional[Union[npt.ArrayLike, float]],
@@ -27,11 +27,11 @@ def _use_back_up_solvers(
     tol: float,
     max_iter: int,
     func_prime: Optional[Callable[[float], float]] = None,
-    func_params: Union[Optional[npt.ArrayLike], Tuple[float, ...]] = None,
-    backup_solvers: List[Union[str, MethodType]] = None,
+    func_params: Union[Optional[npt.ArrayLike], tuple[float, ...]] = None,
+    backup_solvers: list[Union[str, MethodType]] = None,
 ) -> Union[
-    Tuple[float, int, bool],
-    Tuple[npt.NDArray[np.float64], npt.NDArray[np.int64], npt.NDArray[np.bool_]],
+    tuple[float, int, bool],
+    tuple[npt.NDArray[np.float64], npt.NDArray[np.int64], npt.NDArray[np.bool_]],
 ]:
     """
     Apply backup solvers to unconverged root-finding results.
@@ -148,15 +148,15 @@ def _use_back_up_solvers(
 
 def _try_back_up_scalar(
     func: Callable[[float], float],
-    results: Tuple[float, int, bool],
+    results: tuple[float, int, bool],
     a: Optional[float],
     b: Optional[float],
     x0: Optional[float],
     tol: float,
     max_iter: int,
     func_prime: Optional[Callable[[float], float]] = None,
-    func_params: Union[Optional[npt.ArrayLike], Tuple[float, ...]] = None,
-    backup_solvers: List[Union[str, MethodType]] = None,
+    func_params: Union[Optional[npt.ArrayLike], tuple[float, ...]] = None,
+    backup_solvers: list[Union[str, MethodType]] = None,
 ):
     """
     Apply a chain of backup solvers to a single unconverged root-finding result.
@@ -362,15 +362,15 @@ def _try_back_up_scalar(
 
 def _try_back_up_vectorised(
     func: Callable[[float], float],
-    results: Tuple[npt.NDArray, npt.NDArray, npt.NDArray],
+    results: tuple[npt.NDArray, npt.NDArray, npt.NDArray],
     a: Optional[npt.ArrayLike],
     b: Optional[npt.ArrayLike],
     x0: Optional[npt.ArrayLike],
     tol: float,
     max_iter: int,
     func_prime: Optional[Callable[[float], float]] = None,
-    func_params: Union[Optional[npt.ArrayLike], Tuple[float, ...]] = None,
-    backup_solvers: List[Union[str, MethodType]] = None,
+    func_params: Union[Optional[npt.ArrayLike], tuple[float, ...]] = None,
+    backup_solvers: list[Union[str, MethodType]] = None,
 ):
     """
     Apply a chain of backup solvers to vectorized unconverged root-finding results.
@@ -604,13 +604,13 @@ def _try_back_up_vectorised(
 def _try_back_up_bracket_vectorised(
     backup_solver: Solver,
     func: Callable[[float], float],
-    results: Tuple[npt.NDArray, npt.NDArray, npt.NDArray],
+    results: tuple[npt.NDArray, npt.NDArray, npt.NDArray],
     a: npt.ArrayLike,
     b: npt.ArrayLike,
     unconverged_idx: npt.ArrayLike,
     tol: float,
     max_iter: int,
-    func_params: Union[Optional[npt.ArrayLike], Tuple[float, ...]],
+    func_params: Union[Optional[npt.ArrayLike], tuple[float, ...]],
 ) -> bool:
     """
     Apply a bracket-based solver to unconverged elements in vectorized results.
@@ -742,12 +742,12 @@ def _try_back_up_bracket_vectorised(
 def _try_back_up_open_vectorised(
     backup_solver: Solver,
     func: Callable[[float], float],
-    results: Tuple[npt.NDArray, npt.NDArray, npt.NDArray],
+    results: tuple[npt.NDArray, npt.NDArray, npt.NDArray],
     x0: npt.ArrayLike,
     unconverged_idx: npt.ArrayLike,
     tol: float,
     max_iter: int,
-    func_params: Union[Optional[npt.ArrayLike], Tuple[float, ...]],
+    func_params: Union[Optional[npt.ArrayLike], tuple[float, ...]],
     func_prime: Optional[Callable[[float], float]],
 ) -> bool:
     """
@@ -891,7 +891,7 @@ def _try_back_up_open_vectorised(
 
 
 def _get_unconverged_func_params(
-    func_params: Optional[Union[npt.ArrayLike, Tuple[float, ...]]],
+    func_params: Optional[Union[npt.ArrayLike, tuple[float, ...]]],
     unconverged_idx: npt.ArrayLike,
 ) -> Optional[npt.NDArray]:
     """
