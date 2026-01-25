@@ -6,6 +6,6 @@ packaging==26.0
 pluggy==1.6.0
 Pygments==2.19.2
 pytest==9.0.2
--e git+ssh://git@github.com/CianQuezon/rapid-roots.git@a668953813f6bca5afbd613b734ff8a74933efa0#egg=rapid_roots
+-e https://github.com/CianQuezon/rapid-roots.git
 ruff==0.14.14
 scipy==1.17.0
