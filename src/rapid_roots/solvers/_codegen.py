@@ -14,7 +14,6 @@ from rapid_roots.shared._enum_tools import parse_enum
 from rapid_roots.solvers._enums import MethodType
 
 
-
 def generate_vectorised_solver(
     scalar_func: Callable[[float], float],
     num_params: int,
