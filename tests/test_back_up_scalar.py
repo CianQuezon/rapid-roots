@@ -14,8 +14,8 @@ import pytest
 from numba import njit
 from scipy import optimize
 
-from meteorological_equations.math.solvers._back_up_logic import _try_back_up_scalar
-from meteorological_equations.math.solvers._enums import SolverName
+from rapid_roots.solvers._back_up_logic import _try_back_up_scalar
+from rapid_roots.solvers._enums import SolverName
 
 # =============================================================================
 # NUMBA-COMPATIBLE TEST FUNCTIONS
@@ -464,7 +464,12 @@ class TestComprehensiveReport:
         test_cases = [
             ("Quadratic", quadratic_func, quadratic_func_scipy, (0.0, 5.0)),
             ("Cubic", cubic_func, cubic_func_scipy, (0.0, 2.0)),
-            ("Transcendental", transcendental_func, transcendental_func_scipy, (0.0, 1.0)),
+            (
+                "Transcendental",
+                transcendental_func,
+                transcendental_func_scipy,
+                (0.0, 1.0),
+            ),
             ("Exponential", exponential_func, exponential_func_scipy, (0.0, 2.0)),
             ("Sine", sine_func, sine_func_scipy, (3.0, 3.3)),
             ("Lambert W", lambert_w_func, lambert_w_func_scipy, (0.0, 1.0)),

@@ -17,7 +17,7 @@ import numpy as np
 import pytest
 from numpy.testing import assert_array_equal
 
-from meteorological_equations.math.solvers.core import RootSolvers
+from rapid_roots.solvers.core import RootSolvers
 
 
 class TestCreateSubstituteResultsScalar:
@@ -414,7 +414,9 @@ class TestCreateSubstituteResultsDataTypes:
 
     def test_array_output_dtypes(self):
         """Test array output dtypes are exactly correct."""
-        roots, iters, conv = RootSolvers._create_substitute_results(x0=np.array([1.0, 2.0]))
+        roots, iters, conv = RootSolvers._create_substitute_results(
+            x0=np.array([1.0, 2.0])
+        )
 
         # NumPy array dtypes
         assert roots.dtype == np.float64, f"Expected float64, got {roots.dtype}"
@@ -423,7 +425,9 @@ class TestCreateSubstituteResultsDataTypes:
 
     def test_array_not_object_dtype(self):
         """Test that arrays are not object dtype."""
-        roots, iters, conv = RootSolvers._create_substitute_results(x0=np.array([1.0, 2.0, 3.0]))
+        roots, iters, conv = RootSolvers._create_substitute_results(
+            x0=np.array([1.0, 2.0, 3.0])
+        )
 
         assert roots.dtype != object
         assert iters.dtype != object
@@ -449,7 +453,9 @@ class TestCreateSubstituteResultsIntegration:
         a = np.array([0.0, 1.0, 2.0])
         b = np.array([5.0, 6.0, 7.0])
 
-        roots, iters, conv = RootSolvers._create_substitute_results(a=a, b=b, max_iter=100)
+        roots, iters, conv = RootSolvers._create_substitute_results(
+            a=a, b=b, max_iter=100
+        )
 
         assert roots.shape == (3,)
         assert np.all(np.isnan(roots))
@@ -462,7 +468,9 @@ class TestCreateSubstituteResultsIntegration:
         a = np.array([0.0, 1.0, 2.0])
         b = np.array([3.0, 4.0, 5.0])
 
-        roots, iters, conv = RootSolvers._create_substitute_results(x0=x0, a=a, b=b, max_iter=50)
+        roots, iters, conv = RootSolvers._create_substitute_results(
+            x0=x0, a=a, b=b, max_iter=50
+        )
 
         # Should use x0's shape (priority)
         assert roots.shape == (3,)

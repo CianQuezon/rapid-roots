@@ -5,25 +5,25 @@ Author: Cian Quezon
 """
 
 import warnings
-from typing import Callable, List, Optional, Tuple, Union
+from typing import Callable, Optional, Union
 
 import numpy as np
 import numpy.typing as npt
 
+from rapid_roots.shared._enum_tools import parse_enum
 from rapid_roots.solvers._back_up_logic import (
     _update_converged_results,
     _use_back_up_solvers,
 )
 from rapid_roots.solvers._enums import MethodType, SolverName
 from rapid_roots.solvers._types import SolverMap
-from rapid_roots.shared._enum_tools import parse_enum
 
 
 class RootSolvers:
     @staticmethod
-    def list_root_solvers() -> List[str]:
+    def list_root_solvers() -> list[str]:
         """
-        List all available root-finding solvers.
+        list all available root-finding solvers.
 
         Returns a list of solver names that can be used with the `get_root` method.
         Each solver implements a different numerical algorithm for finding roots of
@@ -72,7 +72,7 @@ class RootSolvers:
 
         Examples
         --------
-        List all available solvers:
+        list all available solvers:
 
         >>> from meteorological_equations.math.solvers import RootSolvers
         >>>
@@ -224,10 +224,10 @@ class RootSolvers:
         max_iter: int = 100,
         main_solver: Union[SolverName, str] = SolverName.NEWTON,
         use_backup: bool = True,
-        backup_solvers: Optional[List[Union[str, SolverName]]] = None,
+        backup_solvers: Optional[list[Union[str, SolverName]]] = None,
     ) -> Union[
-        Tuple[float, int, bool],
-        Tuple[npt.NDArray[np.float64], npt.NDArray[np.int64], npt.NDArray[np.bool_]],
+        tuple[float, int, bool],
+        tuple[npt.NDArray[np.float64], npt.NDArray[np.int64], npt.NDArray[np.bool_]],
     ]:
         """
         Find roots of a function using numerical solvers with automatic backup.
@@ -399,7 +399,7 @@ class RootSolvers:
 
         See Also
         --------
-        list_root_solvers : List all available solvers
+        list_root_solvers : list all available solvers
         """
         results = None
 
@@ -456,7 +456,9 @@ class RootSolvers:
 
                     else:
                         roots, iterations, converged_flags = results
-                        bracket_roots, bracket_iterations, bracket_converged_flags = bracket_results
+                        bracket_roots, bracket_iterations, bracket_converged_flags = (
+                            bracket_results
+                        )
 
                         open_roots_arr = np.asarray(roots, dtype=np.float64)
 
@@ -465,7 +467,9 @@ class RootSolvers:
                                 results = bracket_results
 
                         else:
-                            unconverged_idx = np.where(np.logical_not(converged_flags))[0]
+                            unconverged_idx = np.where(np.logical_not(converged_flags))[
+                                0
+                            ]
 
                             if len(unconverged_idx) > 0:
                                 _update_converged_results(
@@ -474,8 +478,12 @@ class RootSolvers:
                                     converged_flag=converged_flags,
                                     unconverged_idx=unconverged_idx,
                                     updated_roots=bracket_roots[unconverged_idx],
-                                    updated_iterations=bracket_iterations[unconverged_idx],
-                                    updated_converged_flag=bracket_converged_flags[unconverged_idx],
+                                    updated_iterations=bracket_iterations[
+                                        unconverged_idx
+                                    ],
+                                    updated_converged_flag=bracket_converged_flags[
+                                        unconverged_idx
+                                    ],
                                 )
 
                                 results = (roots, iterations, converged_flags)
@@ -506,7 +514,12 @@ class RootSolvers:
         elif method_type == MethodType.BRACKET:
             try:
                 results = solver.find_root(
-                    func=func, a=a, b=b, func_params=func_params, tol=tol, max_iter=max_iter
+                    func=func,
+                    a=a,
+                    b=b,
+                    func_params=func_params,
+                    tol=tol,
+                    max_iter=max_iter,
                 )
 
             except Exception as e:
@@ -522,7 +535,9 @@ class RootSolvers:
                 stacklevel=2,
             )
 
-            results = RootSolvers._create_substitute_results(x0=x0, a=a, b=b, max_iter=max_iter)
+            results = RootSolvers._create_substitute_results(
+                x0=x0, a=a, b=b, max_iter=max_iter
+            )
 
         _, _, converged_flags = results
 
@@ -551,7 +566,9 @@ class RootSolvers:
         a: Optional[Union[float, npt.ArrayLike]] = None,
         b: Optional[Union[float, npt.ArrayLike]] = None,
         max_iter: int = 100,
-    ) -> Tuple[Union[float, npt.NDArray], Union[int, npt.NDArray], Union[bool, npt.NDArray]]:
+    ) -> tuple[
+        Union[float, npt.NDArray], Union[int, npt.NDArray], Union[bool, npt.NDArray]
+    ]:
         """
 
         Create substitute unconverged results when primary solver fails completely.
@@ -640,7 +657,7 @@ class RootSolvers:
         x0: Optional[Union[float, npt.ArrayLike]] = None,
         a: Optional[Union[float, npt.ArrayLike]] = None,
         b: Optional[Union[float, npt.ArrayLike]] = None,
-    ) -> Tuple[int, bool]:
+    ) -> tuple[int, bool]:
         """
         Determine the number of problems from input arrays.
 
@@ -726,4 +743,6 @@ class RootSolvers:
                 )
             return func_params
         else:
-            raise ValueError(f"func_params must be 0D, 1D, or 2D, got {func_params.ndim}D")
+            raise ValueError(
+                f"func_params must be 0D, 1D, or 2D, got {func_params.ndim}D"
+            )

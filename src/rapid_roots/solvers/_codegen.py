@@ -10,12 +10,14 @@ import numpy as np
 import numpy.typing as npt
 from numba import njit, prange
 
-from rapid_roots.solvers._enums import MethodType
 from rapid_roots.shared._enum_tools import parse_enum
+from rapid_roots.solvers._enums import MethodType
 
 
 def generate_vectorised_solver(
-    scalar_func: Callable[[float], float], num_params: int, method_type: Union[MethodType, str]
+    scalar_func: Callable[[float], float],
+    num_params: int,
+    method_type: Union[MethodType, str],
 ) -> Callable[[npt.ArrayLike], npt.NDArray[np.float64]]:
     """
     Generate a JIT-compiled vectorised solver from a scalar solver function.

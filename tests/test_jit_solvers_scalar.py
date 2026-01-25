@@ -11,7 +11,7 @@ import pytest
 from numba import njit
 from scipy.optimize import brentq, newton
 
-from meteorological_equations.math.solvers._jit_solvers import (
+from rapid_roots.solvers._jit_solvers import (
     _bisection_scalar,
     _brent_scalar,
     _newton_raphson_scalar,
@@ -91,7 +91,9 @@ class TestNewtonRaphsonScalar:
         # Solve x^2 - 5x + 6 = 0, root at x=2 or x=3
         a, b, c = 1.0, -5.0, 6.0
         root, iters, converged = _newton_raphson_scalar(f, fp, 1.5, 1e-6, 50, a, b, c)
-        scipy_root = newton(lambda x: a * x**2 + b * x + c, 1.5, fprime=lambda x: 2 * a * x + b)
+        scipy_root = newton(
+            lambda x: a * x**2 + b * x + c, 1.5, fprime=lambda x: 2 * a * x + b
+        )
 
         assert converged
         assert np.isclose(root, scipy_root, atol=1e-6)
@@ -165,7 +167,9 @@ class TestNewtonRaphsonScalar:
 
         a, b = 2.0, 1.0
         root, iters, converged = _newton_raphson_scalar(f, fp, 0.5, 1e-8, 50, a, b)
-        scipy_root = newton(lambda x: a * np.sin(x) - b, 0.5, fprime=lambda x: a * np.cos(x))
+        scipy_root = newton(
+            lambda x: a * np.sin(x) - b, 0.5, fprime=lambda x: a * np.cos(x)
+        )
 
         assert converged
         assert np.isclose(root, scipy_root, atol=1e-8)
@@ -278,7 +282,9 @@ class TestBisectionScalar:
             f, 250.0, 300.0, 1e-4, 100, T_surf, Td, P, factor
         )
 
-        scipy_root = brentq(lambda T: T - Td - factor * (T_surf - T) * (P / 101325.0), 250.0, 300.0)
+        scipy_root = brentq(
+            lambda T: T - Td - factor * (T_surf - T) * (P / 101325.0), 250.0, 300.0
+        )
 
         assert converged
         assert np.isclose(root, scipy_root, atol=1e-4)
@@ -378,7 +384,9 @@ class TestBrentScalar:
             return scale * np.sin(x) - offset
 
         scale, offset = 2.0, 1.0
-        root, iters, converged = _brent_scalar(f, 0.0, np.pi / 2, 1e-8, 100, scale, offset)
+        root, iters, converged = _brent_scalar(
+            f, 0.0, np.pi / 2, 1e-8, 100, scale, offset
+        )
         scipy_root = brentq(lambda x: scale * np.sin(x) - offset, 0.0, np.pi / 2)
 
         assert converged
@@ -394,7 +402,9 @@ class TestBrentScalar:
         k = 10.0
 
         root_brent, iters_brent, conv_brent = _brent_scalar(f, 0.0, 5.0, 1e-8, 100, k)
-        root_bisect, iters_bisect, conv_bisect = _bisection_scalar(f, 0.0, 5.0, 1e-8, 100, k)
+        root_bisect, iters_bisect, conv_bisect = _bisection_scalar(
+            f, 0.0, 5.0, 1e-8, 100, k
+        )
 
         assert conv_brent and conv_bisect
         assert np.isclose(root_brent, root_bisect, atol=1e-8)
@@ -518,7 +528,9 @@ class TestConsistencyWithScipy:
         def f(x, param):
             return x**2 + param
 
-        root, _, converged = _bisection_scalar(f, 0.0, np.sqrt(-offset) + 1.0, 1e-6, 100, offset)
+        root, _, converged = _bisection_scalar(
+            f, 0.0, np.sqrt(-offset) + 1.0, 1e-6, 100, offset
+        )
         scipy_root = brentq(lambda x: x**2 + offset, 0.0, np.sqrt(-offset) + 1.0)
 
         assert converged

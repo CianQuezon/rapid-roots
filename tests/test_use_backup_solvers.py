@@ -14,10 +14,10 @@ import pytest
 from numba import njit
 from scipy.optimize import bisect, brentq, newton, root_scalar
 
-from meteorological_equations.math.solvers._back_up_logic import (
+from rapid_roots.solvers._back_up_logic import (
     _use_back_up_solvers,
 )
-from meteorological_equations.math.solvers._enums import SolverName
+from rapid_roots.solvers._enums import SolverName
 
 # ============================================================================
 # Test Functions (JIT-compiled for compatibility)
@@ -147,9 +147,15 @@ class TestScalarRouting:
         )
 
         # Check types are scalar
-        assert isinstance(root, (float, np.floating)), f"Root should be scalar, got {type(root)}"
-        assert isinstance(iters, (int, np.integer)), f"Iters should be scalar, got {type(iters)}"
-        assert isinstance(conv, (bool, np.bool_)), f"Conv should be scalar, got {type(conv)}"
+        assert isinstance(root, (float, np.floating)), (
+            f"Root should be scalar, got {type(root)}"
+        )
+        assert isinstance(iters, (int, np.integer)), (
+            f"Iters should be scalar, got {type(iters)}"
+        )
+        assert isinstance(conv, (bool, np.bool_)), (
+            f"Conv should be scalar, got {type(conv)}"
+        )
 
         # Check convergence
         assert conv, "Should converge"
@@ -226,7 +232,13 @@ class TestScalarRouting:
         results = (2.0, 8, True)
 
         root, iters, conv = _use_back_up_solvers(
-            func=cubic_func, results=results, a=0.0, b=5.0, x0=None, tol=1e-6, max_iter=100
+            func=cubic_func,
+            results=results,
+            a=0.0,
+            b=5.0,
+            x0=None,
+            tol=1e-6,
+            max_iter=100,
         )
 
         # Should return unchanged
@@ -503,7 +515,9 @@ class TestParametricFunctions:
         )
 
         assert conv, f"Should converge, got {conv}"
-        assert np.isclose(root, 2.0, atol=default_tolerance), f"Root should be 2.0, got {root}"
+        assert np.isclose(root, 2.0, atol=default_tolerance), (
+            f"Root should be 2.0, got {root}"
+        )
 
     def test_vectorized_with_2d_parameters(self, default_tolerance, max_iterations):
         """Test vectorized dispatch with 2D parameters."""
@@ -542,7 +556,9 @@ class TestParametricFunctions:
             f"All roots should be 2.0, got {roots}"
         )
 
-    def test_vectorized_mixed_convergence_with_parameters(self, default_tolerance, max_iterations):
+    def test_vectorized_mixed_convergence_with_parameters(
+        self, default_tolerance, max_iterations
+    ):
         """Test parameter handling with partial convergence."""
         roots = np.array([2.0, np.nan, np.nan])
         iters = np.array([5, 100, 100])
@@ -950,7 +966,9 @@ class TestComprehensiveIntegration:
 
         # Validate with SciPy multiple methods
         scipy_brent = brentq(difficult_func, 1.5, 3.0, xtol=strict_tolerance)
-        scipy_newton = newton(difficult_func, 2.0, fprime=difficult_prime, tol=strict_tolerance)
+        scipy_newton = newton(
+            difficult_func, 2.0, fprime=difficult_prime, tol=strict_tolerance
+        )
 
         # Should match both methods
         assert np.isclose(root, scipy_brent, atol=1e-10)
@@ -1057,7 +1075,9 @@ class TestComprehensiveIntegration:
 
                 # Also verify residual
                 residual = abs(cubic_func(roots[i]))
-                assert residual < default_tolerance, f"Element {i} residual too large: {residual}"
+                assert residual < default_tolerance, (
+                    f"Element {i} residual too large: {residual}"
+                )
 
 
 # ============================================================================

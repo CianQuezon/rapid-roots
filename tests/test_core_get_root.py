@@ -21,7 +21,7 @@ from numba import njit
 from numpy.testing import assert_allclose
 from scipy.optimize import bisect, brentq, newton
 
-from meteorological_equations.math.solvers.core import RootSolvers
+from rapid_roots.solvers.core import RootSolvers
 
 # ============================================================================
 # Test Functions
@@ -150,7 +150,12 @@ class TestGetRootScalarBrent:
     def test_transcendental_brent(self):
         """Test transcendental function with Brent."""
         root, iters, conv = RootSolvers.get_root(
-            func=transcendental, a=0.0, b=1.0, main_solver="brent", tol=1e-10, use_backup=False
+            func=transcendental,
+            a=0.0,
+            b=1.0,
+            main_solver="brent",
+            tol=1e-10,
+            use_backup=False,
         )
 
         scipy_root = brentq(transcendental.py_func, 0.0, 1.0, xtol=1e-10)
@@ -174,7 +179,12 @@ class TestGetRootScalarBrent:
     def test_tight_tolerance_brent(self):
         """Test Brent with very tight tolerance."""
         root, iters, conv = RootSolvers.get_root(
-            func=simple_quadratic, a=0.0, b=5.0, main_solver="brent", tol=1e-12, use_backup=False
+            func=simple_quadratic,
+            a=0.0,
+            b=5.0,
+            main_solver="brent",
+            tol=1e-12,
+            use_backup=False,
         )
 
         assert conv is True
@@ -201,7 +211,9 @@ class TestGetRootScalarNewton:
         )
 
         # Compare with SciPy
-        scipy_root = newton(simple_quadratic.py_func, 1.5, fprime=simple_quadratic_prime.py_func)
+        scipy_root = newton(
+            simple_quadratic.py_func, 1.5, fprime=simple_quadratic_prime.py_func
+        )
 
         assert conv is True
         assert_allclose(root, scipy_root, rtol=1e-10)
@@ -211,7 +223,11 @@ class TestGetRootScalarNewton:
     def test_cubic_newton(self):
         """Test cubic function with Newton."""
         root, iters, conv = RootSolvers.get_root(
-            func=cubic, func_prime=cubic_prime, x0=2.5, main_solver="newton", use_backup=False
+            func=cubic,
+            func_prime=cubic_prime,
+            x0=2.5,
+            main_solver="newton",
+            use_backup=False,
         )
 
         scipy_root = newton(cubic.py_func, 2.5, fprime=cubic_prime.py_func)
@@ -248,7 +264,9 @@ class TestGetRootScalarNewton:
             use_backup=False,
         )
 
-        scipy_root = newton(exponential_func.py_func, 1.0, fprime=exponential_prime.py_func)
+        scipy_root = newton(
+            exponential_func.py_func, 1.0, fprime=exponential_prime.py_func
+        )
 
         assert conv is True
         assert_allclose(root, scipy_root, rtol=1e-10)
@@ -265,7 +283,9 @@ class TestGetRootScalarNewton:
             use_backup=False,
         )
 
-        scipy_root = newton(difficult_func.py_func, 2.0, fprime=difficult_prime.py_func, tol=1e-10)
+        scipy_root = newton(
+            difficult_func.py_func, 2.0, fprime=difficult_prime.py_func, tol=1e-10
+        )
 
         assert conv is True
         assert_allclose(root, scipy_root, rtol=1e-9)
@@ -283,7 +303,11 @@ class TestGetRootScalarBisection:
     def test_simple_quadratic_bisection(self):
         """Test simple quadratic with Bisection."""
         root, iters, conv = RootSolvers.get_root(
-            func=simple_quadratic, a=0.0, b=5.0, main_solver="bisection", use_backup=False
+            func=simple_quadratic,
+            a=0.0,
+            b=5.0,
+            main_solver="bisection",
+            use_backup=False,
         )
 
         # Compare with SciPy
@@ -309,7 +333,12 @@ class TestGetRootScalarBisection:
     def test_transcendental_bisection(self):
         """Test transcendental function with Bisection."""
         root, iters, conv = RootSolvers.get_root(
-            func=transcendental, a=0.0, b=1.0, main_solver="bisection", tol=1e-10, use_backup=False
+            func=transcendental,
+            a=0.0,
+            b=1.0,
+            main_solver="bisection",
+            tol=1e-10,
+            use_backup=False,
         )
 
         scipy_root = bisect(transcendental.py_func, 0.0, 1.0, xtol=1e-10)
@@ -611,7 +640,12 @@ class TestGetRootHybridBrent:
         b = np.full(n, 5.0)
 
         roots, iters, conv = RootSolvers.get_root(
-            func=simple_quadratic, x0=x0, a=a, b=b, main_solver="brent", use_backup=False
+            func=simple_quadratic,
+            x0=x0,
+            a=a,
+            b=b,
+            main_solver="brent",
+            use_backup=False,
         )
 
         # All should converge (some via open, some via bracket)
@@ -679,7 +713,12 @@ class TestGetRootToleranceAndIterations:
     def test_tight_tolerance(self):
         """Test with very tight tolerance."""
         root, iters, conv = RootSolvers.get_root(
-            func=simple_quadratic, a=0.0, b=5.0, main_solver="brent", tol=1e-14, use_backup=False
+            func=simple_quadratic,
+            a=0.0,
+            b=5.0,
+            main_solver="brent",
+            tol=1e-14,
+            use_backup=False,
         )
 
         assert conv is True
@@ -689,7 +728,12 @@ class TestGetRootToleranceAndIterations:
     def test_loose_tolerance(self):
         """Test with loose tolerance."""
         root, iters, conv = RootSolvers.get_root(
-            func=simple_quadratic, a=0.0, b=5.0, main_solver="brent", tol=1e-2, use_backup=False
+            func=simple_quadratic,
+            a=0.0,
+            b=5.0,
+            main_solver="brent",
+            tol=1e-2,
+            use_backup=False,
         )
 
         assert conv is True
@@ -758,7 +802,11 @@ class TestGetRootAccuracyValidation:
 
             assert conv, f"Failed to converge for {func}"
             assert_allclose(
-                root, scipy_root, rtol=1e-10, atol=1e-10, err_msg=f"Mismatch for {solver} on {func}"
+                root,
+                scipy_root,
+                rtol=1e-10,
+                atol=1e-10,
+                err_msg=f"Mismatch for {solver} on {func}",
             )
             assert_allclose(root, expected, rtol=1e-6)
 
@@ -793,7 +841,12 @@ class TestGetRootAccuracyValidation:
         b = np.linspace(3.0, 5.0, n)
 
         roots, _, conv = RootSolvers.get_root(
-            func=simple_quadratic, a=a, b=b, main_solver="brent", tol=1e-10, use_backup=False
+            func=simple_quadratic,
+            a=a,
+            b=b,
+            main_solver="brent",
+            tol=1e-10,
+            use_backup=False,
         )
 
         assert np.all(conv)
@@ -823,7 +876,11 @@ class TestGetRootPerformance:
         )
 
         bisect_root, bisect_iters, bisect_conv = RootSolvers.get_root(
-            func=simple_quadratic, a=0.0, b=5.0, main_solver="bisection", use_backup=False
+            func=simple_quadratic,
+            a=0.0,
+            b=5.0,
+            main_solver="bisection",
+            use_backup=False,
         )
 
         assert newton_conv and bisect_conv
@@ -837,7 +894,11 @@ class TestGetRootPerformance:
         )
 
         bisect_root, bisect_iters, bisect_conv = RootSolvers.get_root(
-            func=simple_quadratic, a=0.0, b=5.0, main_solver="bisection", use_backup=False
+            func=simple_quadratic,
+            a=0.0,
+            b=5.0,
+            main_solver="bisection",
+            use_backup=False,
         )
 
         assert brent_conv and bisect_conv

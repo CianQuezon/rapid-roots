@@ -9,9 +9,9 @@ import pytest
 from numba import njit
 from scipy.optimize import brentq, newton
 
-from meteorological_equations.math.solvers._codegen import generate_vectorised_solver
-from meteorological_equations.math.solvers._enums import MethodType
-from meteorological_equations.math.solvers._jit_solvers import (
+from rapid_roots.solvers._codegen import generate_vectorised_solver
+from rapid_roots.solvers._enums import MethodType
+from rapid_roots.solvers._jit_solvers import (
     _bisection_scalar,
     _brent_scalar,
     _newton_raphson_scalar,
@@ -44,7 +44,10 @@ class TestCodegenOpenMethods:
 
         # Compare with scipy
         expected = np.array(
-            [newton(lambda x: x**2 - 4, 1.5, fprime=lambda x: 2 * x) for _ in range(100)]
+            [
+                newton(lambda x: x**2 - 4, 1.5, fprime=lambda x: 2 * x)
+                for _ in range(100)
+            ]
         )
 
         assert np.all(converged)
@@ -73,7 +76,10 @@ class TestCodegenOpenMethods:
 
         # Compare with scipy
         expected = np.array(
-            [newton(lambda x, k=k: x**2 - k, 1.5, fprime=lambda x: 2 * x) for k in k_values]
+            [
+                newton(lambda x, k=k: x**2 - k, 1.5, fprime=lambda x: 2 * x)
+                for k in k_values
+            ]
         )
 
         assert np.all(converged)
@@ -232,7 +238,9 @@ class TestCodegenBracketMethods:
 
         roots, iters, converged = solver(f, func_params, a, b, 1e-6, 100)
 
-        expected = np.array([brentq(lambda x, k=k: x**3 - k, 0.0, 10.0) for k in k_values])
+        expected = np.array(
+            [brentq(lambda x, k=k: x**3 - k, 0.0, 10.0) for k in k_values]
+        )
 
         assert np.all(converged)
         assert np.allclose(roots, expected, atol=1e-6)
@@ -266,7 +274,9 @@ class TestCodegenBracketMethods:
         expected = np.array(
             [
                 brentq(
-                    lambda x, i=i: params[i, 0] * x**3 + params[i, 1] * x + params[i, 2],
+                    lambda x, i=i: params[i, 0] * x**3
+                    + params[i, 1] * x
+                    + params[i, 2],
                     a_vals[i],
                     b_vals[i],
                 )

@@ -11,7 +11,7 @@ import pytest
 from numba import njit
 from scipy.optimize import newton
 
-from meteorological_equations.math.solvers._jit_solvers import _newton_raphson_vectorised
+from rapid_roots.solvers._jit_solvers import _newton_raphson_vectorised
 
 
 class TestNewtonRaphsonVectorised:
@@ -37,7 +37,10 @@ class TestNewtonRaphsonVectorised:
 
         # Compare with scipy
         expected = np.array(
-            [newton(lambda x: x**2 - 4, 1.5, fprime=lambda x: 2 * x) for _ in range(100)]
+            [
+                newton(lambda x: x**2 - 4, 1.5, fprime=lambda x: 2 * x)
+                for _ in range(100)
+            ]
         )
 
         assert np.all(converged)
@@ -58,11 +61,16 @@ class TestNewtonRaphsonVectorised:
         # 100 solves, no parameters (omitted)
         x0 = np.ones(100) * 1.5
 
-        roots, iters, converged = _newton_raphson_vectorised(f, fp, x0)  # func_params omitted
+        roots, iters, converged = _newton_raphson_vectorised(
+            f, fp, x0
+        )  # func_params omitted
 
         # Compare with scipy
         expected = np.array(
-            [newton(lambda x: x**2 - 4, 1.5, fprime=lambda x: 2 * x) for _ in range(100)]
+            [
+                newton(lambda x: x**2 - 4, 1.5, fprime=lambda x: 2 * x)
+                for _ in range(100)
+            ]
         )
 
         assert np.all(converged)
@@ -215,7 +223,8 @@ class TestNewtonRaphsonVectorised:
                         * (func_params[i, 2] / 101325.0)
                     ),
                     x0[i],
-                    fprime=lambda _T, i=i: 1.0 + func_params[i, 3] * (func_params[i, 2] / 101325.0),
+                    fprime=lambda _T, i=i: 1.0
+                    + func_params[i, 3] * (func_params[i, 2] / 101325.0),
                 )
                 for i in range(n)
             ]

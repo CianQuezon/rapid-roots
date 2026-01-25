@@ -5,7 +5,7 @@ Author: Cian Quezon
 """
 
 from abc import ABC, abstractmethod
-from typing import Callable, Optional, Tuple, Union
+from typing import Callable, Optional, Union
 
 import numpy as np
 import numpy.typing as npt
@@ -21,23 +21,23 @@ from rapid_roots.solvers._jit_solvers import (
 )
 
 BracketRootMethodScalar = Callable[
-    [Callable[[float], float], float, float, float, int], Tuple[float, int, bool]
+    [Callable[[float], float], float, float, float, int], tuple[float, int, bool]
 ]
 
 BracketRootMethodVectorised = Callable[
     [Callable[[float], float], npt.ArrayLike, npt.ArrayLike, float, int],
-    Tuple[npt.NDArray[np.float64], npt.NDArray[np.int64], npt.NDArray[np.bool_]],
+    tuple[npt.NDArray[np.float64], npt.NDArray[np.int64], npt.NDArray[np.bool_]],
 ]
 
 
 OpenRootMethodScalar = Callable[
     [Callable[[float], float], Optional[Callable[[float], float]], float, int],
-    Tuple[float, int, bool],
+    tuple[float, int, bool],
 ]
 
 OpenRootMethodVectorised = Callable[
     [Callable[[float], float], Optional[Callable[[float], float]], npt.ArrayLike, int],
-    Tuple[npt.NDArray[np.float64], npt.NDArray[np.int64], npt.NDArray[np.bool_]],
+    tuple[npt.NDArray[np.float64], npt.NDArray[np.int64], npt.NDArray[np.bool_]],
 ]
 
 
@@ -98,8 +98,8 @@ class Solver(ABC):
 
     @staticmethod
     def _prepare_scalar_params(
-        func_params: Optional[Union[Tuple[float, ...], npt.ArrayLike]],
-    ) -> Tuple[float, ...]:
+        func_params: Optional[Union[tuple[float, ...], npt.ArrayLike]],
+    ) -> tuple[float, ...]:
         """
         Prepare function parameters for scalar solver execution.
 
@@ -148,12 +148,12 @@ class Solver(ABC):
         b: Union[float, npt.ArrayLike],
         scalar_bracket_method_func: BracketRootMethodScalar,
         vector_bracket_method_func: BracketRootMethodVectorised,
-        func_params: Union[Optional[npt.ArrayLike], Tuple[float, ...]] = None,
+        func_params: Union[Optional[npt.ArrayLike], tuple[float, ...]] = None,
         tol: float = 1e-6,
         max_iter: int = 50,
     ) -> Union[
-        Tuple[float, int, bool],
-        Tuple[npt.NDArray[np.float64], npt.NDArray[np.int64], npt.NDArray[np.bool_]],
+        tuple[float, int, bool],
+        tuple[npt.NDArray[np.float64], npt.NDArray[np.int64], npt.NDArray[np.bool_]],
     ]:
         """
         Dispatch bracket methods to scalar or vectorised implementations.
@@ -247,12 +247,12 @@ class Solver(ABC):
         x0: Union[npt.ArrayLike, float],
         scalar_open_method_func: OpenRootMethodScalar,
         vectorised_open_method_func: OpenRootMethodVectorised,
-        func_params: Optional[Union[npt.ArrayLike, Tuple[float, ...]]] = None,
+        func_params: Optional[Union[npt.ArrayLike, tuple[float, ...]]] = None,
         tol: float = 1e-6,
         max_iter: int = 100,
     ) -> Union[
-        Tuple[float, int, bool],
-        Tuple[npt.NDArray[np.float64], npt.NDArray[np.int64], npt.NDArray[np.bool_]],
+        tuple[float, int, bool],
+        tuple[npt.NDArray[np.float64], npt.NDArray[np.int64], npt.NDArray[np.bool_]],
     ]:
         """
         Dispatch open methods to scalar or vectorised implementations.
@@ -310,7 +310,9 @@ class Solver(ABC):
         if initial_guess_arr.ndim == 0:
             params = self._prepare_scalar_params(func_params=func_params)
             if func_prime is not None:
-                return scalar_open_method_func(func, func_prime, x0, tol, max_iter, *params)
+                return scalar_open_method_func(
+                    func, func_prime, x0, tol, max_iter, *params
+                )
             else:
                 return scalar_open_method_func(func, x0, tol, max_iter, *params)
 
@@ -329,7 +331,11 @@ class Solver(ABC):
                 )
             else:
                 roots, iterations, converged_flags = vectorised_open_method_func(
-                    func=func, x0=x0_flatten, func_params=func_params, tol=tol, max_iter=max_iter
+                    func=func,
+                    x0=x0_flatten,
+                    func_params=func_params,
+                    tol=tol,
+                    max_iter=max_iter,
                 )
 
             roots = np.asarray(roots, dtype=np.float64)
@@ -454,12 +460,12 @@ class NewtonRaphsonSolver(Solver):
         func: Callable[[float], float],
         func_prime: Callable[[float], float],
         x0: Union[float, npt.ArrayLike],
-        func_params: Optional[Union[Tuple[float, ...], npt.ArrayLike]] = None,
+        func_params: Optional[Union[tuple[float, ...], npt.ArrayLike]] = None,
         tol: float = 1e-6,
         max_iter: int = 50,
     ) -> Union[
-        Tuple[float, int, bool],
-        Tuple[npt.NDArray[np.float64], npt.NDArray[np.int64], npt.NDArray[np.bool_]],
+        tuple[float, int, bool],
+        tuple[npt.NDArray[np.float64], npt.NDArray[np.int64], npt.NDArray[np.bool_]],
     ]:
         """
         Find roots using Newton-Raphson method.
@@ -486,7 +492,7 @@ class NewtonRaphsonSolver(Solver):
         func_params : tuple, array_like, or None, optional
             Additional parameters for func and func_prime.
             - None: No parameters
-            - Tuple/list: Same parameters for all problems
+            - tuple/list: Same parameters for all problems
             - 2D array: Different parameters per problem (vectorised)
         tol : float, default=1e-6
             Convergence tolerance. Stops when |x_{n+1} - x_n| < tol.
@@ -614,12 +620,12 @@ class BisectionSolver(Solver):
         func: Callable[[float], float],
         a: Union[npt.ArrayLike, float],
         b: Union[npt.ArrayLike, float],
-        func_params: Optional[Union[Tuple[float, ...], npt.ArrayLike]] = None,
+        func_params: Optional[Union[tuple[float, ...], npt.ArrayLike]] = None,
         tol: float = 1e-6,
         max_iter: int = 100,
     ) -> Union[
-        Tuple[float, int, bool],
-        Tuple[npt.NDArray[np.float64], npt.NDArray[np.int64], npt.NDArray[np.bool_]],
+        tuple[float, int, bool],
+        tuple[npt.NDArray[np.float64], npt.NDArray[np.int64], npt.NDArray[np.bool_]],
     ]:
         """
         Find roots using bisection method.
@@ -779,12 +785,12 @@ class BrentSolver(Solver):
         func: Callable[[float], float],
         a: Union[npt.ArrayLike, float],
         b: Union[npt.ArrayLike, float],
-        func_params: Optional[Union[Tuple[float, ...], npt.ArrayLike]] = None,
+        func_params: Optional[Union[tuple[float, ...], npt.ArrayLike]] = None,
         tol: float = 1e-6,
         max_iter: int = 100,
     ) -> Union[
-        Tuple[float, int, bool],
-        Tuple[npt.NDArray[np.float64], npt.NDArray[np.int64], npt.NDArray[np.bool_]],
+        tuple[float, int, bool],
+        tuple[npt.NDArray[np.float64], npt.NDArray[np.int64], npt.NDArray[np.bool_]],
     ]:
         """
         Find roots using Brent's method.

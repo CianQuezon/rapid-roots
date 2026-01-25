@@ -12,7 +12,7 @@ import pytest
 from numba import njit
 from scipy import optimize
 
-from meteorological_equations.math.solvers._solvers import (
+from rapid_roots.solvers._solvers import (
     BisectionSolver,
     BrentSolver,
     NewtonRaphsonSolver,
@@ -119,13 +119,17 @@ def func_four_params(x: float, p0: float, p1: float, p2: float, p3: float) -> fl
 
 
 @njit
-def func_four_params_derivative(x: float, p0: float, p1: float, p2: float, _p3: float) -> float:
+def func_four_params_derivative(
+    x: float, p0: float, p1: float, p2: float, _p3: float
+) -> float:
     """Derivative: 3*p0*x^2 + 2*p1*x + p2"""
     return 3 * p0 * x**2 + 2 * p1 * x + p2
 
 
 @njit
-def func_five_params(x: float, p0: float, p1: float, p2: float, p3: float, p4: float) -> float:
+def func_five_params(
+    x: float, p0: float, p1: float, p2: float, p3: float, p4: float
+) -> float:
     """Function with five parameters: p0*x^4 + p1*x^3 + p2*x^2 + p3*x + p4 = 0"""
     return p0 * x**4 + p1 * x**3 + p2 * x**2 + p3 * x + p4
 
@@ -196,16 +200,24 @@ class TestScalarNoParameters:
 
     def test_bisection_polynomial_scalar(self, bisection_solver):
         """Bisection on polynomial equation (no params)"""
-        root, iters, converged = bisection_solver.find_root(polynomial_func, a=2.0, b=3.0, tol=1e-6)
-        scipy_root = optimize.bisect(lambda x: x**3 - 2 * x - 5, a=2.0, b=3.0, xtol=1e-6)
+        root, iters, converged = bisection_solver.find_root(
+            polynomial_func, a=2.0, b=3.0, tol=1e-6
+        )
+        scipy_root = optimize.bisect(
+            lambda x: x**3 - 2 * x - 5, a=2.0, b=3.0, xtol=1e-6
+        )
 
         assert converged
         assert np.abs(root - scipy_root) < 1e-5
 
     def test_brent_exponential_scalar(self, brent_solver):
         """Brent's method on exponential equation (no params)"""
-        root, iters, converged = brent_solver.find_root(exponential_func, a=0.3, b=1.5, tol=1e-6)
-        scipy_root = optimize.brentq(lambda x: np.exp(x) - 3 * x, a=0.3, b=1.5, xtol=1e-6)
+        root, iters, converged = brent_solver.find_root(
+            exponential_func, a=0.3, b=1.5, tol=1e-6
+        )
+        scipy_root = optimize.brentq(
+            lambda x: np.exp(x) - 3 * x, a=0.3, b=1.5, xtol=1e-6
+        )
 
         assert converged
         assert np.abs(root - scipy_root) < 1e-6
@@ -223,9 +235,15 @@ class TestScalarWithParameters:
         """Newton-Raphson with 1 parameter"""
         k = 9.0
         root, iters, converged = newton_solver.find_root(
-            func_one_param, func_one_param_derivative, x0=2.0, func_params=(k,), tol=1e-6
+            func_one_param,
+            func_one_param_derivative,
+            x0=2.0,
+            func_params=(k,),
+            tol=1e-6,
         )
-        scipy_root = optimize.newton(lambda x: x**2 - k, x0=2.0, fprime=lambda x: 2 * x, tol=1e-6)
+        scipy_root = optimize.newton(
+            lambda x: x**2 - k, x0=2.0, fprime=lambda x: 2 * x, tol=1e-6
+        )
 
         assert converged
         assert np.abs(root - scipy_root) < 1e-6
@@ -235,7 +253,11 @@ class TestScalarWithParameters:
         """Newton-Raphson with 2 parameters"""
         a, b = 2.0, 8.0
         root, iters, converged = newton_solver.find_root(
-            func_two_params, func_two_params_derivative, x0=1.5, func_params=(a, b), tol=1e-6
+            func_two_params,
+            func_two_params_derivative,
+            x0=1.5,
+            func_params=(a, b),
+            tol=1e-6,
         )
         scipy_root = optimize.newton(
             lambda x: a * x**2 - b, x0=1.5, fprime=lambda x: 2 * a * x, tol=1e-6
@@ -249,10 +271,17 @@ class TestScalarWithParameters:
         """Newton-Raphson with 3 parameters"""
         a, b, c = 1.0, -5.0, 6.0  # x^2 - 5x + 6 = 0, roots at 2 and 3
         root, iters, converged = newton_solver.find_root(
-            func_three_params, func_three_params_derivative, x0=1.5, func_params=(a, b, c), tol=1e-6
+            func_three_params,
+            func_three_params_derivative,
+            x0=1.5,
+            func_params=(a, b, c),
+            tol=1e-6,
         )
         scipy_root = optimize.newton(
-            lambda x: a * x**2 + b * x + c, x0=1.5, fprime=lambda x: 2 * a * x + b, tol=1e-6
+            lambda x: a * x**2 + b * x + c,
+            x0=1.5,
+            fprime=lambda x: 2 * a * x + b,
+            tol=1e-6,
         )
 
         assert converged
@@ -316,7 +345,9 @@ class TestScalarWithParameters:
         root, iters, converged = bisection_solver.find_root(
             func_three_params, a=1.5, b=2.5, func_params=(a, b, c), tol=1e-6
         )
-        scipy_root = optimize.bisect(lambda x: a * x**2 + b * x + c, a=1.5, b=2.5, xtol=1e-6)
+        scipy_root = optimize.bisect(
+            lambda x: a * x**2 + b * x + c, a=1.5, b=2.5, xtol=1e-6
+        )
 
         assert converged
         assert np.abs(root - scipy_root) < 1e-5
@@ -352,7 +383,10 @@ class TestVectorizedNoParameters:
         scipy_roots = np.array(
             [
                 optimize.newton(
-                    lambda x: x**3 - 2 * x - 5, x0=x0, fprime=lambda x: 3 * x**2 - 2, tol=1e-6
+                    lambda x: x**3 - 2 * x - 5,
+                    x0=x0,
+                    fprime=lambda x: 3 * x**2 - 2,
+                    tol=1e-6,
                 )
                 for x0 in x0_array
             ]
@@ -419,7 +453,10 @@ class TestVectorizedWithParameters:
         scipy_roots = np.array(
             [
                 optimize.newton(
-                    lambda x, k=k: x**2 - k, x0=x0_array[i], fprime=lambda x: 2 * x, tol=1e-6
+                    lambda x, k=k: x**2 - k,
+                    x0=x0_array[i],
+                    fprime=lambda x: 2 * x,
+                    tol=1e-6,
                 )
                 for i, k in enumerate(k_values)
             ]
@@ -483,7 +520,9 @@ class TestVectorizedWithParameters:
         scipy_roots = np.array(
             [
                 optimize.newton(
-                    lambda x, i=i: params[i, 0] * x**2 + params[i, 1] * x + params[i, 2],
+                    lambda x, i=i: params[i, 0] * x**2
+                    + params[i, 1] * x
+                    + params[i, 2],
                     x0=x0_array[i],
                     fprime=lambda x, i=i: 2 * params[i, 0] * x + params[i, 1],
                     tol=1e-6,
@@ -553,7 +592,9 @@ class TestVectorizedWithParameters:
 
         scipy_roots = np.array(
             [
-                optimize.bisect(lambda x, k=k: x**2 - k, a=a_array[i], b=b_array[i], xtol=1e-6)
+                optimize.bisect(
+                    lambda x, k=k: x**2 - k, a=a_array[i], b=b_array[i], xtol=1e-6
+                )
                 for i, k in enumerate(k_values)
             ]
         )
@@ -698,7 +739,11 @@ class TestPerformance:
         x0_array = np.sqrt(k_values) * 0.8
 
         roots, iters, converged = newton_solver.find_root(
-            func_one_param, func_one_param_derivative, x0=x0_array, func_params=k_values, tol=1e-6
+            func_one_param,
+            func_one_param_derivative,
+            x0=x0_array,
+            func_params=k_values,
+            tol=1e-6,
         )
 
         assert np.all(converged)

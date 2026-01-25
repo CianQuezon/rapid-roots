@@ -11,7 +11,7 @@ import pytest
 from numba import njit
 from scipy.optimize import brentq
 
-from meteorological_equations.math.solvers._jit_solvers import _bisection_vectorised
+from rapid_roots.solvers._jit_solvers import _bisection_vectorised
 
 
 class TestBisectionVectorised:
@@ -76,7 +76,9 @@ class TestBisectionVectorised:
         )
 
         # Compare with scipy
-        expected = np.array([brentq(lambda x, k=k: x**3 - k, 0.0, 10.0) for k in k_values])
+        expected = np.array(
+            [brentq(lambda x, k=k: x**3 - k, 0.0, 10.0) for k in k_values]
+        )
 
         assert np.all(converged)
         assert np.allclose(roots, expected, atol=1e-6)
@@ -105,7 +107,11 @@ class TestBisectionVectorised:
         # Compare with scipy
         expected = np.array(
             [
-                brentq(lambda x, i=i: a_values[i] * x**2 - b_values[i], a_bounds[i], b_bounds[i])
+                brentq(
+                    lambda x, i=i: a_values[i] * x**2 - b_values[i],
+                    a_bounds[i],
+                    b_bounds[i],
+                )
                 for i in range(n)
             ]
         )
@@ -141,7 +147,11 @@ class TestBisectionVectorised:
         expected = np.array(
             [
                 brentq(
-                    lambda x, i=i: params[i, 0] * x**3 + params[i, 1] * x + params[i, 2], a[i], b[i]
+                    lambda x, i=i: params[i, 0] * x**3
+                    + params[i, 1] * x
+                    + params[i, 2],
+                    a[i],
+                    b[i],
                 )
                 for i in range(len(params))
             ]
