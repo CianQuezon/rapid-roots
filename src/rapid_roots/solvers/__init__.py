@@ -1,11 +1,11 @@
-from meteorological_equations.math.solvers._enums import MethodType, SolverName
-from meteorological_equations.math.solvers._solvers import (
+from rapid_roots.solvers._enums import MethodType, SolverName
+from rapid_roots.solvers._solvers import (
     BisectionSolver,
     BrentSolver,
     NewtonRaphsonSolver,
     Solver,
 )
-from meteorological_equations.math.solvers.core import RootSolvers
+from rapid_roots.solvers.core import RootSolvers
 
 __all__ = [
     "Solver",

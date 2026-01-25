@@ -10,8 +10,8 @@ import numpy as np
 import numpy.typing as npt
 from numba import njit
 
-from meteorological_equations.math.solvers._codegen import generate_vectorised_solver
-from meteorological_equations.math.solvers._enums import MethodType
+from rapid_roots.solvers._codegen import generate_vectorised_solver
+from rapid_roots.solvers._enums import MethodType
 
 
 @njit

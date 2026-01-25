@@ -10,8 +10,8 @@ import numpy as np
 import numpy.typing as npt
 from numba import njit, prange
 
-from meteorological_equations.math.solvers._enums import MethodType
-from meteorological_equations.shared._enum_tools import parse_enum
+from rapid_roots.solvers._enums import MethodType
+from rapid_roots.shared._enum_tools import parse_enum
 
 
 def generate_vectorised_solver(
