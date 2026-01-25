@@ -4,7 +4,7 @@ Root finding solvers with using Numba JIT compilation.
 Author: Cian Quezon
 """
 
-from typing import Callable, Optional, Tuple
+from typing import Callable, Optional
 
 import numpy as np
 import numpy.typing as npt
@@ -22,7 +22,7 @@ def _newton_raphson_scalar(
     tol: float = 1e-6,
     max_iter: int = 50,
     *func_params,
-) -> Tuple[float, int, bool]:
+) -> tuple[float, int, bool]:
     """
     Scalar Newton-Raphson method for finding roots of a function.
 
@@ -106,7 +106,7 @@ def _newton_raphson_vectorised(
     func_params: Optional[npt.ArrayLike] = None,
     tol: float = 1e-6,
     max_iter: int = 50,
-) -> Tuple[npt.NDArray[np.float64], npt.NDArray[np.int64], npt.NDArray[np.bool_]]:
+) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.int64], npt.NDArray[np.bool_]]:
     """
     Vectorised Newton-Raphson method for solving multiple root-finding problems.
 
@@ -204,7 +204,7 @@ def _bisection_scalar(
     tol: float = 1e-6,
     max_iter: int = 100,
     *func_params,
-) -> Tuple[float, int, bool]:
+) -> tuple[float, int, bool]:
     """
     Scalar bisection method for finding roots of a function.
 
@@ -306,7 +306,7 @@ def _bisection_vectorised(
     func_params: Optional[npt.ArrayLike] = None,
     tol: float = 1e-6,
     max_iter: int = 100,
-) -> Tuple[npt.NDArray[np.float64], npt.NDArray[np.int64], npt.NDArray[np.bool_]]:
+) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.int64], npt.NDArray[np.bool_]]:
     """
     Vectorised bisection method for solving multiple root-finding problems.
 
@@ -399,7 +399,7 @@ def _brent_scalar(
     tol: float = 1e-6,
     max_iter: int = 100,
     *func_params,
-) -> Tuple[float, int, bool]:
+) -> tuple[float, int, bool]:
     """
     Scalar Brent's method for finding roots of a function.
 
@@ -544,7 +544,7 @@ def _brent_vectorised(
     func_params: Optional[npt.ArrayLike] = None,
     tol: float = 1e-6,
     max_iter: int = 100,
-) -> Tuple[npt.NDArray[np.float64], npt.NDArray[np.int64], npt.NDArray[np.bool_]]:
+) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.int64], npt.NDArray[np.bool_]]:
     """
     Vectorised Brent's method for solving multiple root-finding problems.
 
@@ -641,7 +641,7 @@ def _brent_vectorised(
 def _validate_and_prepare_params(
     func_params: Optional[npt.ArrayLike],
     n_solves: int,
-) -> Tuple[npt.NDArray[np.float64], int]:
+) -> tuple[npt.NDArray[np.float64], int]:
     """
     Validate and prepare function parameters for vectorised root-finding solvers.
 
