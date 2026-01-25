@@ -5,12 +5,12 @@ Author: Cian Quezon
 """
 
 from enum import Enum
-from typing import Type, TypeVar, Union
+from typing import TypeVar, Union
 
 E = TypeVar("E", bound=Enum)
 
 
-def parse_enum(value: Union[str, E], enum_class: Type[E]) -> E:
+def parse_enum(value: Union[str, E], enum_class: type[E]) -> E:
     """
     returns the enum based on the string input or enum type input
 
