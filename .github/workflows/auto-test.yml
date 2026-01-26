@@ -2,9 +2,7 @@ name: Python CI
 
 on:
   push:
-    branches: [ main, 'features/**', 'WIP/**']
   pull_request:
-    branches: [ main ]
 
 jobs:
   build-and-test:
