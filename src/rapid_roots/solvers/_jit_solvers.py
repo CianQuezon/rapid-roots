@@ -490,16 +490,23 @@ def _brent_scalar(
     mflag = True
 
     for i in range(max_iter):
-        if abs(fb) < tol or abs(b - a) < tol:
+        # FIXED: Proper convergence criteria
+        # Check bracket width (x-space tolerance)
+        if abs(b - a) < tol:
+            return b, i + 1, True
+        
+        # Check function value (f(x)-space, must be near zero)
+        # Don't use tol here - different units/scales
+        if abs(fb) < 1e-12:
             return b, i + 1, True
 
+        # [Rest of algorithm unchanged]
         if fa != fc and fb != fc:
             s = (
                 a * fb * fc / ((fa - fb) * (fa - fc))
                 + b * fa * fc / ((fb - fa) * (fb - fc))
                 + c * fa * fb / ((fc - fa) * (fc - fb))
             )
-
         else:
             s = b - fb * (b - a) / (fb - fa)
 
@@ -535,7 +542,6 @@ def _brent_scalar(
             fa, fb = fb, fa
 
     return b, max_iter, False
-
 
 def _brent_vectorised(
     func: Callable[[float], float],
