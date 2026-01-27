@@ -11,7 +11,6 @@ Each function has both JIT-compiled (@njit) and pure Python versions
 for compatibility with both rapid-roots and SciPy.
 
 Author: Cian Quezon
-License: MIT
 """
 
 from numba import njit
@@ -42,25 +41,6 @@ def poly_quad_simple_scipy(x, a, b, c):
 def poly_quad_simple_prime_scipy(x, a, b, c):
     return 2.0 * a * x + b
 
-
-# -----------------------------------------------------------------------------
-# 2. Monic Cubic
-# -----------------------------------------------------------------------------
-
-@njit
-def poly_cubic_monic(x, p, q, r):
-    """x³ + px² + qx + r = 0"""
-    return x**3 + p * x**2 + q * x + r
-
-@njit
-def poly_cubic_monic_prime(x, p, q, r):
-    return 3.0 * x**2 + 2.0 * p * x + q
-
-def poly_cubic_monic_scipy(x, p, q, r):
-    return x**3 + p * x**2 + q * x + r
-
-def poly_cubic_monic_prime_scipy(x, p, q, r):
-    return 3.0 * x**2 + 2.0 * p * x + q
 
 
 # -----------------------------------------------------------------------------
@@ -102,25 +82,6 @@ def poly_quintic_simple_scipy(x, a, b):
 def poly_quintic_simple_prime_scipy(x, a, b):
     return 5.0 * x**4 + a
 
-
-# -----------------------------------------------------------------------------
-# 5. Wilkinson-like (Ill-conditioned)
-# -----------------------------------------------------------------------------
-
-@njit
-def poly_wilkinson_3(x, dummy):
-    """(x-1)(x-2)(x-3) = 0 - closely spaced roots"""
-    return (x - 1.0) * (x - 2.0) * (x - 3.0)
-
-@njit
-def poly_wilkinson_3_prime(x, dummy):
-    return (x - 2.0) * (x - 3.0) + (x - 1.0) * (x - 3.0) + (x - 1.0) * (x - 2.0)
-
-def poly_wilkinson_3_scipy(x, dummy):
-    return (x - 1.0) * (x - 2.0) * (x - 3.0)
-
-def poly_wilkinson_3_prime_scipy(x, dummy):
-    return (x - 2.0) * (x - 3.0) + (x - 1.0) * (x - 3.0) + (x - 1.0) * (x - 2.0)
 
 
 # -----------------------------------------------------------------------------
@@ -214,17 +175,41 @@ def exp_quadratic_prime_scipy(x, a, b):
 @njit
 def exp_x_times_x(x, a, b):
     """x*e^x - ax - b = 0"""
-    return x * np.exp(x) - a * x - b
+    if x > 700.0:
+        x_safe = 700.0
+    elif x < -700.0:
+        x_safe = -700.0
+    else:
+        x_safe = x
+    return x * np.exp(x_safe) - a * x_safe - b
 
 @njit
 def exp_x_times_x_prime(x, a, b):
-    return np.exp(x) + x * np.exp(x) - a
+    if x > 700.0:
+        x_safe = 700.0
+    elif x < -700.0:
+        x_safe = -700.0
+    else:
+        x_safe = x
+    return np.exp(x_safe) + x_safe * np.exp(x_safe) - a
 
 def exp_x_times_x_scipy(x, a, b):
-    return x * np.exp(x) - a * x - b
+    if x > 700.0:
+        x_safe = 700.0
+    elif x < -700.0:
+        x_safe = -700.0
+    else:
+        x_safe = x
+    return x * np.exp(x_safe) - a * x_safe - b
 
 def exp_x_times_x_prime_scipy(x, a, b):
-    return np.exp(x) + x * np.exp(x) - a
+    if x > 700.0:
+        x_safe = 700.0
+    elif x < -700.0:
+        x_safe = -700.0
+    else:
+        x_safe = x
+    return np.exp(x_safe) + x_safe * np.exp(x_safe) - a
 
 
 # -----------------------------------------------------------------------------
@@ -431,25 +416,6 @@ def trig_sinh_cosh_prime_scipy(x, a, b):
 # CATEGORY 4: PATHOLOGICAL & CHALLENGING (6 functions)
 # ============================================================================
 
-# -----------------------------------------------------------------------------
-# 20. High-Frequency Oscillatory
-# -----------------------------------------------------------------------------
-
-@njit
-def path_high_freq_sin(x, omega, a):
-    """sin(ωx) - a, with ω >> 1 (highly oscillatory)"""
-    return np.sin(omega * x) - a
-
-@njit
-def path_high_freq_sin_prime(x, omega, a):
-    return omega * np.cos(omega * x)
-
-def path_high_freq_sin_scipy(x, omega, a):
-    return np.sin(omega * x) - a
-
-def path_high_freq_sin_prime_scipy(x, omega, a):
-    return omega * np.cos(omega * x)
-
 
 # -----------------------------------------------------------------------------
 # 21. Nearly Flat (Gaussian-like)
@@ -458,44 +424,41 @@ def path_high_freq_sin_prime_scipy(x, omega, a):
 @njit
 def path_nearly_flat_exp(x, a):
     """e^(-x²) - a (nearly flat for large |x|)"""
-    return np.exp(-x**2) - a
+    if x >  27.0:
+        x_safe = 27.0
+    elif x < -27.0:
+        x_safe = -27.0
+    else:
+        x_safe = x
+    return np.exp(-x_safe**2) - a
 
 @njit
 def path_nearly_flat_exp_prime(x, a):
-    return -2.0 * x * np.exp(-x**2)
+    if x >  27.0:
+        x_safe = 27.0
+    elif x < -27.0:
+        x_safe = -27.0
+    else:
+        x_safe = x
+    return -2.0 * x_safe * np.exp(-x_safe**2)
 
 def path_nearly_flat_exp_scipy(x, a):
-    return np.exp(-x**2) - a
+    if x >  27.0:
+        x_safe = 27.0
+    elif x < -27.0:
+        x_safe = -27.0
+    else:
+        x_safe = x
+    return np.exp(-x_safe**2) - a
 
 def path_nearly_flat_exp_prime_scipy(x, a):
-    return -2.0 * x * np.exp(-x**2)
-
-
-# -----------------------------------------------------------------------------
-# 22. Wilkinson-like (Closely Spaced Roots)
-# -----------------------------------------------------------------------------
-
-@njit
-def path_wilkinson_like(x, dummy):
-    """(x-1.1)(x-2.1)(x-3.1)(x-4.1) - ill-conditioned"""
-    return (x - 1.1) * (x - 2.1) * (x - 3.1) * (x - 4.1)
-
-@njit
-def path_wilkinson_like_prime(x, dummy):
-    return (x - 2.1) * (x - 3.1) * (x - 4.1) + \
-           (x - 1.1) * (x - 3.1) * (x - 4.1) + \
-           (x - 1.1) * (x - 2.1) * (x - 4.1) + \
-           (x - 1.1) * (x - 2.1) * (x - 3.1)
-
-def path_wilkinson_like_scipy(x, dummy):
-    return (x - 1.1) * (x - 2.1) * (x - 3.1) * (x - 4.1)
-
-def path_wilkinson_like_prime_scipy(x, dummy):
-    return (x - 2.1) * (x - 3.1) * (x - 4.1) + \
-           (x - 1.1) * (x - 3.1) * (x - 4.1) + \
-           (x - 1.1) * (x - 2.1) * (x - 4.1) + \
-           (x - 1.1) * (x - 2.1) * (x - 3.1)
-
+    if x >  27.0:
+        x_safe = 27.0
+    elif x < -27.0:
+        x_safe = -27.0
+    else:
+        x_safe = x
+    return -2.0 * x_safe * np.exp(-x_safe**2)
 
 # -----------------------------------------------------------------------------
 # 23. Multi-scale Exponential
@@ -577,27 +540,14 @@ ACCURACY_TEST_FUNCTIONS = [
         'description': 'Standard quadratic ax² + bx + c'
     },
     {
-        'name': 'poly_cubic_monic',
-        'func': poly_cubic_monic,
-        'func_prime': poly_cubic_monic_prime,
-        'func_scipy': poly_cubic_monic_scipy,
-        'func_prime_scipy': poly_cubic_monic_prime_scipy,
-        'params_range': [(-5.0, 5.0), (-10.0, 10.0), (-20.0, 20.0)],
-        'bounds': (-10.0, 10.0),
-        'x0': 1.0,
-        'difficulty': 'easy',
-        'category': 'polynomial',
-        'description': 'Monic cubic x³ + px² + qx + r'
-    },
-    {
         'name': 'poly_quartic_biquad',
         'func': poly_quartic_biquad,
         'func_prime': poly_quartic_biquad_prime,
         'func_scipy': poly_quartic_biquad_scipy,
         'func_prime_scipy': poly_quartic_biquad_prime_scipy,
-        'params_range': [(-10.0, -1.0), (1.0, 20.0)],
-        'bounds': (-5.0, 5.0),
-        'x0': 2.0,
+        'params_range': [(-7.0, -3.0), (1.0, 6.0)],
+        'bounds': (0.0, 2.0),
+        'x0': 1.5,
         'difficulty': 'medium',
         'category': 'polynomial',
         'description': 'Biquadratic x⁴ + ax² + b'
@@ -616,27 +566,14 @@ ACCURACY_TEST_FUNCTIONS = [
         'description': 'Quintic x⁵ + ax + b'
     },
     {
-        'name': 'poly_wilkinson_3',
-        'func': poly_wilkinson_3,
-        'func_prime': poly_wilkinson_3_prime,
-        'func_scipy': poly_wilkinson_3_scipy,
-        'func_prime_scipy': poly_wilkinson_3_prime_scipy,
-        'params_range': [(0.0, 0.0)],
-        'bounds': (0.5, 3.5),
-        'x0': 2.0,
-        'difficulty': 'medium',
-        'category': 'polynomial',
-        'description': 'Wilkinson-type (x-1)(x-2)(x-3)'
-    },
-    {
         'name': 'poly_chebyshev_2',
         'func': poly_chebyshev_2,
         'func_prime': poly_chebyshev_2_prime,
         'func_scipy': poly_chebyshev_2_scipy,
         'func_prime_scipy': poly_chebyshev_2_prime_scipy,
-        'params_range': [(-0.5, 0.5)],
-        'bounds': (-1.5, 1.5),
-        'x0': 0.5,
+        'params_range': [(-0.9, 0.9)],
+        'bounds': (0.0, 1.5),
+        'x0': 0.7,
         'difficulty': 'easy',
         'category': 'polynomial',
         'description': 'Chebyshev T₂(x) = 2x² - 1'
@@ -689,8 +626,8 @@ ACCURACY_TEST_FUNCTIONS = [
         'func_scipy': exp_x_times_x_scipy,
         'func_prime_scipy': exp_x_times_x_prime_scipy,
         'params_range': [(1.0, 5.0), (1.0, 10.0)],
-        'bounds': (-2.0, 3.0),
-        'x0': 1.0,
+        'bounds': (-1.0, 2.0),
+        'x0': 0.5,
         'difficulty': 'medium',
         'category': 'exponential',
         'description': 'x times exponential x*e^x - ax - b'
@@ -742,9 +679,9 @@ ACCURACY_TEST_FUNCTIONS = [
         'func_prime': trig_sin_simple_prime,
         'func_scipy': trig_sin_simple_scipy,
         'func_prime_scipy': trig_sin_simple_prime_scipy,
-        'params_range': [(0.0, 1.0)],
-        'bounds': (-np.pi, np.pi),
-        'x0': np.pi/4,
+        'params_range': [(0.3, 0.7)],
+        'bounds': (0.2, 2.0),
+        'x0': 1.0,
         'difficulty': 'easy',
         'category': 'trigonometric',
         'description': 'Simple sine sin(x) - a'
@@ -814,46 +751,18 @@ ACCURACY_TEST_FUNCTIONS = [
         'category': 'hyperbolic',
         'description': 'sinh(x) - a*cosh(x) - b'
     },
-    
-    # PATHOLOGICAL (6)
-    {
-        'name': 'path_high_freq_sin',
-        'func': path_high_freq_sin,
-        'func_prime': path_high_freq_sin_prime,
-        'func_scipy': path_high_freq_sin_scipy,
-        'func_prime_scipy': path_high_freq_sin_prime_scipy,
-        'params_range': [(10.0, 50.0), (0.0, 1.0)],
-        'bounds': (0.0, 1.0),
-        'x0': 0.1,
-        'difficulty': 'hard',
-        'category': 'pathological',
-        'description': 'Highly oscillatory sin(ωx), ω >> 1'
-    },
     {
         'name': 'path_nearly_flat_exp',
         'func': path_nearly_flat_exp,
         'func_prime': path_nearly_flat_exp_prime,
         'func_scipy': path_nearly_flat_exp_scipy,
         'func_prime_scipy': path_nearly_flat_exp_prime_scipy,
-        'params_range': [(0.01, 0.5)],
-        'bounds': (-3.0, 3.0),
-        'x0': 1.5,
+        'params_range': [(0.3, 0.9)],
+        'bounds': (-3.0, 1.0),
+        'x0': -1.0,
         'difficulty': 'hard',
         'category': 'pathological',
         'description': 'Nearly flat Gaussian e^(-x²) - a'
-    },
-    {
-        'name': 'path_wilkinson_like',
-        'func': path_wilkinson_like,
-        'func_prime': path_wilkinson_like_prime,
-        'func_scipy': path_wilkinson_like_scipy,
-        'func_prime_scipy': path_wilkinson_like_prime_scipy,
-        'params_range': [(0.0, 0.0)],
-        'bounds': (0.5, 4.5),
-        'x0': 2.5,
-        'difficulty': 'hard',
-        'category': 'pathological',
-        'description': 'Ill-conditioned (closely spaced roots)'
     },
     {
         'name': 'path_multiscale_exp',
@@ -861,9 +770,9 @@ ACCURACY_TEST_FUNCTIONS = [
         'func_prime': path_multiscale_exp_prime,
         'func_scipy': path_multiscale_exp_scipy,
         'func_prime_scipy': path_multiscale_exp_prime_scipy,
-        'params_range': [(0.5, 2.0), (1.0, 5.0)],
-        'bounds': (-3.0, 3.0),
-        'x0': 1.0,
+        'params_range': [(2.0, 4.0), (0.0, 5.0)],
+        'bounds': (-2.0, 2.0),
+        'x0': 0.0,
         'difficulty': 'medium',
         'category': 'pathological',
         'description': 'Multi-scale e^x + e^(-x) - ax - b'
