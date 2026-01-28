@@ -55,8 +55,8 @@ def run_benchmark_single_function(func_dict: Dict, n_samples: int = 50,
     bisect_error_metrics = calculate_error_metrics(scipy_results=scipy_bisect_results, rapid_roots_results=rapid_roots_bisect_results)
     
     results['bisect'] = {
-        'rapid_roots_converged': np.sum(np.isfinite(rapid_roots_bisect_results)),
-        'scipy_converged': np.sum(np.isfinite(scipy_bisect_results)),
+        'rapid_roots_converged': {category: np.sum(np.isfinite(rapid_roots_bisect_results)), 'total': np.sum(np.isfinite(rapid_roots_bisect_results))},
+        'scipy_converged': {category: np.sum(np.isfinite(scipy_bisect_results)), 'total': np.sum(np.isfinite(rapid_roots_bisect_results)) },
         **bisect_error_metrics
     }
 
@@ -66,14 +66,23 @@ def run_benchmark_single_function(func_dict: Dict, n_samples: int = 50,
 
     newton_error_metrics = calculate_error_metrics(scipy_results=scipy_newton_results, rapid_roots_results=rapid_roots_newton_results)
     results['newton'] = {
-        'scipy_converged': np.sum(np.isfinite(scipy_newton_results)),
-        'rapid_roots_converged': np.sum(np.isfinite(rapid_roots_newton_results)),
+        'scipy_converged': {category: np.sum(np.isfinite(scipy_newton_results)), 'total': np.sum(np.isfinite(scipy_newton_results))},
+        'rapid_roots_converged': {category: np.sum(np.isfinite(rapid_roots_newton_results)), 'total': np.sum(np.isfinite(rapid_roots_newton_results)) },
         **newton_error_metrics
     }
 
     # Brent results
     scipy_brent_results = _benchmark_scipy_brent(func_dict=func_dict, params=params, a_bounds=a_bounds, b_bounds=b_bounds)
     rapid_roots_brent_results = _benchmark_rapid_roots_brent(func_dict=func_dict, params=params, a_bounds=a_bounds, b_bounds=b_bounds)
+
+    brent_error_metrics = calculate_error_metrics(scipy_results=scipy_brent_results, rapid_roots_results=rapid_roots_brent_results)
+    results['brent'] = {
+        'scipy_converged':{category: np.sum(np.isfinite(scipy_brent_results)), 'total': np.sum(np.isfinite(scipy_brent_results)) },
+        'rapid_roots_converged': {category: np.sum(np.isfinite(rapid_roots_brent_results)), 'total': np.sum(np.isfinite(rapid_roots_brent_results))},
+        **brent_error_metrics
+    }
+
+    return results
 
 
 
