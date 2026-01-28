@@ -812,7 +812,7 @@ FUNCTIONS_LIST = [
 
 def get_function_by_name(name: str) -> Dict:
     """Get function entry by name."""
-    for func in ACCURACY_TEST_FUNCTIONS:
+    for func in FUNCTIONS_LIST:
         if func['name'] == name:
             return func
     raise ValueError(f"Function '{name}' not found in test suite")
@@ -820,12 +820,12 @@ def get_function_by_name(name: str) -> Dict:
 
 def get_by_category(category: str) -> List[Dict]:
     """Get all functions in a specific category."""
-    return [f for f in ACCURACY_TEST_FUNCTIONS if f['category'] == category]
+    return [f for f in FUNCTIONS_LIST if f['category'] == category]
 
 
 def get_by_difficulty(difficulty: str) -> List[Dict]:
     """Get all functions of a specific difficulty."""
-    return [f for f in ACCURACY_TEST_FUNCTIONS if f['difficulty'] == difficulty]
+    return [f for f in FUNCTIONS_LIST if f['difficulty'] == difficulty]
 
 
 def get_test_summary() -> Dict:
@@ -833,7 +833,7 @@ def get_test_summary() -> Dict:
     categories = {}
     difficulties = {}
     
-    for func in ACCURACY_TEST_FUNCTIONS:
+    for func in FUNCTIONS_LIST:
         cat = func['category']
         diff = func['difficulty']
         
@@ -841,7 +841,7 @@ def get_test_summary() -> Dict:
         difficulties[diff] = difficulties.get(diff, 0) + 1
     
     return {
-        'total': len(ACCURACY_TEST_FUNCTIONS),
+        'total': len(FUNCTIONS_LIST),
         'categories': categories,
         'difficulties': difficulties
     }
@@ -868,7 +868,7 @@ if __name__ == "__main__":
     print("Function List:")
     print("="*70)
     
-    for i, func in enumerate(ACCURACY_TEST_FUNCTIONS, 1):
+    for i, func in enumerate(FUNCTIONS_LIST, 1):
         print(f"{i:2}. {func['name']:25} [{func['difficulty']:6}] {func['description']}")
     
     print("="*70 + "\n")
