@@ -1,7 +1,8 @@
 """
 Docstring for benchmark.accuracy._benchmark
 """
-
+import sys
+from pathlib import Path
 from typing import Dict
 
 import numpy as np
@@ -9,8 +10,12 @@ import numpy.typing as npt
 from scipy.optimize import brentq, bisect, newton
 
 from rapid_roots.solvers.core import RootSolvers
-from _generate import generate_test_samples
-from functions import (
+
+sys.path.append(str(Path(__file__).parent.parent))
+
+from _calculations import calculate_error_metrics
+from shared._generate import generate_test_samples
+from shared.functions import (
     ACCURACY_TEST_FUNCTIONS,
     get_function_by_name
 )
@@ -34,6 +39,42 @@ def run_benchmark_single_function(func_dict: Dict, n_samples: int = 50,
     dict
         Results for all methods containing error metrics
     """
+    name = func_dict['name']
+    category = func_dict['category']
+
+    params, a_bounds, b_bounds = generate_test_samples(func_dict=func_dict, n_samples=n_samples, seed=seed)
+
+    x0_values = (a_bounds + b_bounds) / 2.0
+
+    results = {}
+
+    # Bisection results
+    scipy_bisect_results = _benchmark_scipy_bisect(func_dict=func_dict, params=params, a_bounds=a_bounds, b_bounds=b_bounds)
+    rapid_roots_bisect_results = _benchmark_rapid_roots_bisect(func_dict=func_dict, params=params, a_bounds=a_bounds, b_bounds=b_bounds)
+
+    bisect_error_metrics = calculate_error_metrics(scipy_results=scipy_bisect_results, rapid_roots_results=rapid_roots_bisect_results)
+    
+    results['bisect'] = {
+        'rapid_roots_converged': np.sum(np.isfinite(rapid_roots_bisect_results)),
+        'scipy_converged': np.sum(np.isfinite(scipy_bisect_results)),
+        **bisect_error_metrics
+    }
+
+    # Newton results
+    scipy_newton_results = _benchmark_scipy_newton(func_dict=func_dict, params=params, x0_values=x0_values)
+    rapid_roots_newton_results = _benchmark_rapid_roots_newton(func_dict=func_dict, params=params, x0_values=x0_values)
+
+    newton_error_metrics = calculate_error_metrics(scipy_results=scipy_newton_results, rapid_roots_results=rapid_roots_newton_results)
+    results['newton'] = {
+        'scipy_converged': np.sum(np.isfinite(scipy_newton_results)),
+        'rapid_roots_converged': np.sum(np.isfinite(rapid_roots_newton_results)),
+        **newton_error_metrics
+    }
+
+    # Brent results
+    scipy_brent_results = _benchmark_scipy_brent(func_dict=func_dict, params=params, a_bounds=a_bounds, b_bounds=b_bounds)
+    rapid_roots_brent_results = _benchmark_rapid_roots_brent(func_dict=func_dict, params=params, a_bounds=a_bounds, b_bounds=b_bounds)
+
 
 
 def _benchmark_scipy_newton(func_dict: Dict, params: npt.NDArray,
