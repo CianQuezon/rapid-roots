@@ -38,7 +38,9 @@ def calculate_error_metrics(scipy_results: npt.NDArray,
             'max_error': np.nan,
             'max_error_percent': np.nan,
             'mean_error_percent': np.nan,
-            'n_valid': 0
+            'n_valid': 0,
+            'abs_errors': np.array([]),
+            'relative_errors': np.array([])
         }
     
     scipy_valid = scipy_results[valid_mask]
@@ -70,5 +72,7 @@ def calculate_error_metrics(scipy_results: npt.NDArray,
         'max_error': max_error,
         'max_error_percent': max_error_percent,
         'mean_error_percent': mean_error_percent,
-        'n_valid': np.sum(valid_mask)
+        'n_valid': np.sum(valid_mask),
+        'abs_errors': abs_errors,
+        'relative_errors': relative_errors
     }
