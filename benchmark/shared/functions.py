@@ -524,7 +524,7 @@ def path_steep_derivative_prime_scipy(x, a, b):
 # FUNCTION REGISTRY
 # ============================================================================
 
-ACCURACY_TEST_FUNCTIONS = [
+FUNCTIONS_LIST = [
     # POLYNOMIALS (6)
     {
         'name': 'poly_quad_simple',
