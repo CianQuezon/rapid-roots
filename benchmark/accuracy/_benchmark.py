@@ -1,34 +1,77 @@
-"""
-Docstring for benchmark.accuracy._benchmark
-"""
+import numpy as np
+import time
+from scipy.optimize import brentq, bisect, newton
+from typing import Dict, List, Tuple
 import sys
 from pathlib import Path
-from typing import Dict
 
-import numpy as np
-import numpy.typing as npt
-from scipy.optimize import brentq, bisect, newton
-
-from rapid_roots.solvers.core import RootSolvers
-
+# Add parent directory to path for imports
 sys.path.append(str(Path(__file__).parent.parent))
 
-from _calculations import calculate_error_metrics
+from rapid_roots.solvers.core import RootSolvers
+from accuracy._calculations import calculate_error_metrics
 from shared._generate import generate_test_samples
 from shared.functions import (
-    ACCURACY_TEST_FUNCTIONS,
+    FUNCTIONS_LIST,
+    get_by_category,
+    get_by_difficulty,
+    get_test_summary,
     get_function_by_name
 )
 
-def run_benchmark_single_function(func_dict: Dict, n_samples: int = 50,
-                                  seed: int = 42) -> Dict:
+def run_functions_accuracy_benchmark(n_samples: int = 50, seed: int = 42) -> Dict:
     """
-    Benchmarks a single function which uses all methods.
+    Run complete accuracy benchmark on all 25 functions.
+    
+    Parameters
+    ----------
+    n_samples : int
+        Number of samples per function
+    seed : int
+        Random seed for reproducibility
+    verbose : bool
+        Print progress
+    
+    Returns
+    -------
+    dict
+        Complete results for all functions and methods
+    """
+    
+    all_results = {}
+    
+    for i, func_dict in enumerate(FUNCTIONS_LIST, 1):
+        name = func_dict['name']
+        category = func_dict['category']
+        difficulty = func_dict['difficulty']
+        
+        # Run benchmark
+        start_time = time.time()
+        results = run_benchmark_single_function(func_dict, n_samples, seed)
+        elapsed = time.time() - start_time
+        
+        # Store results
+        all_results[name] = {
+            'category': category,
+            'difficulty': difficulty,
+            'description': func_dict['description'],
+            'results': results,
+            'time': elapsed
+        }
+    
+    return all_results
+
+
+
+def run_benchmark_single_function(func_dict: Dict, n_samples: int = 50,
+                              seed: int = 42) -> Dict:
+    """
+    Benchmark a single function across all methods.
     
     Parameters
     ----------
     func_dict : dict
-        Function dictionary from ACCURACY_TEST_FUNCTIONS
+        Function dictionary from FUNCTIONS_LIST
     n_samples : int
         Number of random samples to test
     seed : int
@@ -40,89 +83,56 @@ def run_benchmark_single_function(func_dict: Dict, n_samples: int = 50,
         Results for all methods containing error metrics
     """
     name = func_dict['name']
-    category = func_dict['category']
-
-    params, a_bounds, b_bounds = generate_test_samples(func_dict=func_dict, n_samples=n_samples, seed=seed)
-
-    x0_values = (a_bounds + b_bounds) / 2.0
-
-    results = {}
-
-    # Bisection results
-    scipy_bisect_results = _benchmark_scipy_bisect(func_dict=func_dict, params=params, a_bounds=a_bounds, b_bounds=b_bounds)
-    rapid_roots_bisect_results = _benchmark_rapid_roots_bisect(func_dict=func_dict, params=params, a_bounds=a_bounds, b_bounds=b_bounds)
-
-    bisect_error_metrics = calculate_error_metrics(scipy_results=scipy_bisect_results, rapid_roots_results=rapid_roots_bisect_results)
     
-    results['bisect'] = {
-        'rapid_roots_converged': {category: np.sum(np.isfinite(rapid_roots_bisect_results)), 'total': np.sum(np.isfinite(rapid_roots_bisect_results))},
-        'scipy_converged': {category: np.sum(np.isfinite(scipy_bisect_results)), 'total': np.sum(np.isfinite(rapid_roots_bisect_results)) },
-        **bisect_error_metrics
-    }
-
-    # Newton results
-    scipy_newton_results = _benchmark_scipy_newton(func_dict=func_dict, params=params, x0_values=x0_values)
-    rapid_roots_newton_results = _benchmark_rapid_roots_newton(func_dict=func_dict, params=params, x0_values=x0_values)
-
-    newton_error_metrics = calculate_error_metrics(scipy_results=scipy_newton_results, rapid_roots_results=rapid_roots_newton_results)
-    results['newton'] = {
-        'scipy_converged': {category: np.sum(np.isfinite(scipy_newton_results)), 'total': np.sum(np.isfinite(scipy_newton_results))},
-        'rapid_roots_converged': {category: np.sum(np.isfinite(rapid_roots_newton_results)), 'total': np.sum(np.isfinite(rapid_roots_newton_results)) },
-        **newton_error_metrics
-    }
-
-    # Brent results
-    scipy_brent_results = _benchmark_scipy_brent(func_dict=func_dict, params=params, a_bounds=a_bounds, b_bounds=b_bounds)
-    rapid_roots_brent_results = _benchmark_rapid_roots_brent(func_dict=func_dict, params=params, a_bounds=a_bounds, b_bounds=b_bounds)
-
-    brent_error_metrics = calculate_error_metrics(scipy_results=scipy_brent_results, rapid_roots_results=rapid_roots_brent_results)
+    params, a_bounds, b_bounds = generate_test_samples(func_dict, n_samples, seed)
+    
+    x0_values = (a_bounds + b_bounds) / 2.0
+    
+    results = {}
+    
+    # Brent Method
+    scipy_brent_results = _benchmark_scipy_brent(func_dict, params, a_bounds, b_bounds)
+    rapid_roots_brent_results = _benchmark_rapid_roots_brent(func_dict, params, a_bounds, b_bounds)
+    
+    brent_error_metrics = calculate_error_metrics(scipy_brent_results, rapid_roots_brent_results)
     results['brent'] = {
-        'scipy_converged':{category: np.sum(np.isfinite(scipy_brent_results)), 'total': np.sum(np.isfinite(scipy_brent_results)) },
-        'rapid_roots_converged': {category: np.sum(np.isfinite(rapid_roots_brent_results)), 'total': np.sum(np.isfinite(rapid_roots_brent_results))},
+        'scipy_converged': np.sum(np.isfinite(scipy_brent_results)),
+        'rapid_converged': np.sum(np.isfinite(rapid_roots_brent_results)),
         **brent_error_metrics
     }
-
-    return results
-
-
-
-def _benchmark_scipy_newton(func_dict: Dict, params: npt.NDArray,
-                           x0_values: npt.NDArray) -> npt.NDArray:
-    """
-    Runs Scipy Newton Raphson on all samples
-    """
-    n_samples = len(params)
-    results = np.full(n_samples, np.nan)
-
-    func_scipy = func_dict['func_scipy']
-    func_prime_scipy = func_dict['func_prime_scipy']
-
-    for i in range(n_samples):
-        try:
-            result = newton(
-                func_scipy,
-                x0_values[i],
-                fprime=func_prime_scipy,
-                args=tuple(params[i]),
-                tol = 1e-12,
-                maxiter=100
-            )
-            results[i] = results
-        except:
-            pass
+    
+    # Bisection Method
+    scipy_bisect_results = _benchmark_scipy_bisect(func_dict, params, a_bounds, b_bounds)
+    rapid_roots_bisect_results = _benchmark_rapid_roots_bisect(func_dict, params, a_bounds, b_bounds)
+    
+    bisect_error_metrics = calculate_error_metrics(scipy_bisect_results, rapid_roots_bisect_results)
+    results['bisect'] = {
+        'scipy_converged': np.sum(np.isfinite(scipy_bisect_results)),
+        'rapid_converged': np.sum(np.isfinite(rapid_roots_bisect_results)),
+        **bisect_error_metrics
+    }
+    
+    # Newton Method
+    scipy_newton_results = _benchmark_scipy_newton(func_dict, params, x0_values)
+    rapid_roots_newton_results = _benchmark_rapid_roots_newton(func_dict, params, x0_values)
+    
+    newton_error_metrics = calculate_error_metrics(scipy_newton_results, rapid_roots_newton_results)
+    results['newton'] = {
+        'scipy_converged': np.sum(np.isfinite(scipy_newton_results)),
+        'rapid_converged': np.sum(np.isfinite(rapid_roots_newton_results)),
+        **newton_error_metrics
+    }
     
     return results
 
-def _benchmark_scipy_brent(func_dict: Dict, params: npt.NDArray,
-                          a_bounds: npt.NDArray, b_bounds: npt.NDArray) -> npt.NDArray:
-    """
-    Runs scipy bisection on all samples
-    """
+def _benchmark_scipy_brent(func_dict: Dict, params: np.ndarray,
+                          a_bounds: np.ndarray, b_bounds: np.ndarray) -> np.ndarray:
+    """Run SciPy Brent on all samples."""
     n_samples = len(params)
     results = np.full(n_samples, np.nan)
-
+    
     func_scipy = func_dict['func_scipy']
-
+    
     for i in range(n_samples):
         try:
             result = brentq(
@@ -133,26 +143,22 @@ def _benchmark_scipy_brent(func_dict: Dict, params: npt.NDArray,
                 xtol=1e-12,
                 maxiter=100
             )
-
             results[i] = result
-        
         except:
             pass
     
     return results
 
-def _benchmark_scipy_bisect(func_dict: Dict, params: npt.NDArray,
-                           a_bounds: npt.NDArray, b_bounds: npt.NDArray):
-    """
-    Run scipy bisection on all samples.
-    """
+
+def _benchmark_scipy_bisect(func_dict: Dict, params: np.ndarray,
+                           a_bounds: np.ndarray, b_bounds: np.ndarray) -> np.ndarray:
+    """Run SciPy Bisection on all samples."""
     n_samples = len(params)
     results = np.full(n_samples, np.nan)
-
+    
     func_scipy = func_dict['func_scipy']
-
+    
     for i in range(n_samples):
-        
         try:
             result = bisect(
                 func_scipy,
@@ -162,44 +168,68 @@ def _benchmark_scipy_bisect(func_dict: Dict, params: npt.NDArray,
                 xtol=1e-12,
                 maxiter=100
             )
-            
             results[i] = result
         except:
             pass
     
     return results
 
-def _benchmark_rapid_roots_brent(func_dict: Dict, params: npt.NDArray,
-                                a_bounds: npt.NDArray, b_bounds: npt.NDArray) -> npt.NDArray:
-    """
-    Run rapid-roots Brent on all samples
-    """
-    func = func_dict['func']
 
+def _benchmark_scipy_newton(func_dict: Dict, params: np.ndarray,
+                           x0_values: np.ndarray) -> np.ndarray:
+    """Run SciPy Newton on all samples."""
+    n_samples = len(params)
+    results = np.full(n_samples, np.nan)
+    
+    func_scipy = func_dict['func_scipy']
+    func_prime_scipy = func_dict['func_prime_scipy']
+    
+    for i in range(n_samples):
+        try:
+            result = newton(
+                func_scipy,
+                x0_values[i],
+                fprime=func_prime_scipy,
+                args=tuple(params[i]),
+                tol=1e-12,
+                maxiter=100
+            )
+            results[i] = result
+        except:
+            pass
+    
+    return results
+
+
+def _benchmark_rapid_roots_brent(func_dict: Dict, params: np.ndarray,
+                                 a_bounds: np.ndarray, b_bounds: np.ndarray) -> np.ndarray:
+    """Run rapid-roots Brent on all samples."""
+    func = func_dict['func']
+    
     try:
         results, iters, converged = RootSolvers.get_root(
             func=func,
             a=a_bounds,
             b=b_bounds,
             func_params=params,
+            main_solver='brent',
             tol=1e-12,
             max_iter=100,
             use_backup=False
         )
-
+        
+        # Set non-converged to NaN
         results[np.logical_not(converged)] = np.nan
-
+        
         return results
-    
     except Exception as e:
-        print(f" rapid-roots Brent failed: {e}")
-        return np.full(len(params, np.nan))
+        print(f"  rapid-roots Brent failed: {e}")
+        return np.full(len(params), np.nan)
 
-def _benchmark_rapid_roots_bisect(func_dict: Dict, params: npt.NDArray,
-                                 a_bounds: npt.NDArray, b_bounds: npt.NDArray) -> npt.NDArray:
-    """
-    Run rapid-roots Bisection on all samples
-    """
+
+def _benchmark_rapid_roots_bisect(func_dict: Dict, params: np.ndarray,
+                                  a_bounds: np.ndarray, b_bounds: np.ndarray) -> np.ndarray:
+    """Run rapid-roots Bisection on all samples."""
     func = func_dict['func']
     
     try:
@@ -213,39 +243,48 @@ def _benchmark_rapid_roots_bisect(func_dict: Dict, params: npt.NDArray,
             max_iter=100,
             use_backup=False
         )
-
+        
+        # Set non-converged to NaN
         results[np.logical_not(converged)] = np.nan
-
+        
         return results
-    
     except Exception as e:
-        print(f" rapid-roots Bisection failed: {e}")
+        print(f"  rapid-roots Bisection failed: {e}")
         return np.full(len(params), np.nan)
-    
-def _benchmark_rapid_roots_newton(func_dict: Dict, params: npt.NDArray,
-                                  x0_values: npt.NDArray) -> npt.NDArray:
-    """
-    Run rapid-roots Newton on all samples
-    """
+
+
+def _benchmark_rapid_roots_newton(func_dict: Dict, params: np.ndarray,
+                                  x0_values: np.ndarray) -> np.ndarray:
+    """Run rapid-roots Newton on all samples."""
     func = func_dict['func']
     func_prime = func_dict['func_prime']
-
-    try: 
+    
+    try:
         results, iters, converged = RootSolvers.get_root(
             func=func,
             x0=x0_values,
             func_prime=func_prime,
             func_params=params,
-            main_solver="newton",
+            main_solver='newton',
             tol=1e-12,
             max_iter=100,
             use_backup=False
         )
-
+        
+        # Set non-converged to NaN
         results[np.logical_not(converged)] = np.nan
+        print(results)
         return results
-    
     except Exception as e:
-        print(f" rapid-roots Newton failed: {e}")
+        print(f"  rapid-roots Newton failed: {e}")
         return np.full(len(params), np.nan)
+
+
+def main():
+    """Run complete accuracy benchmark."""
     
+    # Run benchmark
+    results = run_functions_accuracy_benchmark(n_samples=50, seed=42)
+
+if __name__ == "__main__":
+    main()
