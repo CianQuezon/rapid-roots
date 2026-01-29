@@ -5,6 +5,7 @@ from typing import Dict, List, Tuple
 import sys
 from pathlib import Path
 
+from tqdm import tqdm
 # Add parent directory to path for imports
 sys.path.append(str(Path(__file__).parent.parent))
 
@@ -40,7 +41,7 @@ def run_functions_accuracy_benchmark(n_samples: int = 50, seed: int = 42) -> Dic
     
     all_results = {}
     
-    for i, func_dict in enumerate(FUNCTIONS_LIST, 1):
+    for func_dict in tqdm(FUNCTIONS_LIST, desc=' Solving Functions'):
         name = func_dict['name']
         category = func_dict['category']
         difficulty = func_dict['difficulty']
@@ -122,7 +123,7 @@ def run_benchmark_single_function(func_dict: Dict, n_samples: int = 50,
         'rapid_converged': np.sum(np.isfinite(rapid_roots_newton_results)),
         **newton_error_metrics
     }
-    
+
     return results
 
 def _benchmark_scipy_brent(func_dict: Dict, params: np.ndarray,
@@ -273,7 +274,6 @@ def _benchmark_rapid_roots_newton(func_dict: Dict, params: np.ndarray,
         
         # Set non-converged to NaN
         results[np.logical_not(converged)] = np.nan
-        print(results)
         return results
     except Exception as e:
         print(f"  rapid-roots Newton failed: {e}")
