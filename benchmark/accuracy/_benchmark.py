@@ -278,13 +278,3 @@ def _benchmark_rapid_roots_newton(func_dict: Dict, params: np.ndarray,
     except Exception as e:
         print(f"  rapid-roots Newton failed: {e}")
         return np.full(len(params), np.nan)
-
-
-def main():
-    """Run complete accuracy benchmark."""
-    
-    # Run benchmark
-    results = run_functions_accuracy_benchmark(n_samples=50, seed=42)
-
-if __name__ == "__main__":
-    main()
