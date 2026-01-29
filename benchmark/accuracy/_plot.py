@@ -8,7 +8,6 @@ import seaborn as sns
 import numpy as np
 
 
-
 def plot_error_distribution_boxplot(benchmark_results: Dict, output_dir = 'benchmark/generated/plots'):
     """
     Create box plot showing distribution of individual sample errors
@@ -33,13 +32,8 @@ def plot_error_distribution_boxplot(benchmark_results: Dict, output_dir = 'bench
 
     for func_name, func_data in benchmark_results.items():
         category = func_data['category'].capitalize()
-
         for method in ['brent', 'bisect', 'newton']:
-            if method not in func_data['results'][method]:
-                continue
- 
-            method_results = func_data['results'][method]
-
+            method_results = func_data['results'].get(method, None)
             sample_errors = method_results.get('abs_errors', None)
 
             if sample_errors is not None:
@@ -47,8 +41,8 @@ def plot_error_distribution_boxplot(benchmark_results: Dict, output_dir = 'bench
                 for error in sample_errors:
                     if np.isfinite(error):
                         categories.append(category)
-                        methods.append(category)
-                        errors.append(error)
+                        methods.append(method)
+                        errors.append(max(error, 1e-20))
 
     print(f"Total data points: {len(errors)}")
     print(f"Categories: {set(categories)}")
@@ -59,7 +53,7 @@ def plot_error_distribution_boxplot(benchmark_results: Dict, output_dir = 'bench
         y=errors,
         hue=methods,
         kind='box',
-        palette={'Brent': '#FF6B6B', 'Bisect': '#4ECDC4', 'Newton': '#95E1D3'},
+        palette={'brent': '#FF6B6B', 'bisect': '#4ECDC4', 'newton': '#95E1D3'},
         height=7,
         aspect=2,
         legend_out=False
@@ -72,6 +66,7 @@ def plot_error_distribution_boxplot(benchmark_results: Dict, output_dir = 'bench
     g.ax.grid(True, alpha=0.3, axis='y', which='both', linestyle='--')
     g.ax.tick_params(axis='x', rotation=45)
 
+    g.add_legend(title='Method', loc='upper left', frameon=True)
     g.legend.set_title('Method')
     sns.move_legend(g, "upper left", frameon=True)
 
