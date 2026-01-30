@@ -12,7 +12,7 @@ import seaborn as sns
 sys.path.append(str(Path(__file__).parent.parent))
 from throughput._benchmark import run_benchmark_functions_throughput
 
-def plot_line_graph_throughput(thorughput_results: Dict, output_dir = 'benchmark/generated/plots'):
+def plot_line_graph_throughput(throughput_results: Dict, output_dir = 'benchmark/generated/plots'):
     """
     Create line plot showing throughput scaling across problem sizes.
     
@@ -41,7 +41,7 @@ def plot_line_graph_throughput(thorughput_results: Dict, output_dir = 'benchmark
     problem_sizes = []
 
 
-    for sample_size, throughput_data in thorughput_results.items():
+    for sample_size, throughput_data in throughput_results.items():
 
         for method in ['brent', 'bisect', 'newton']:
             method_results = throughput_data.get(method, None)
