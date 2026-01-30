@@ -494,7 +494,7 @@ def _brent_scalar(
         # Check bracket width (x-space tolerance)
         if abs(b - a) < tol:
             return b, i + 1, True
-        
+
         # Check function value (f(x)-space, must be near zero)
         # Don't use tol here - different units/scales
         if abs(fb) < 1e-12:
@@ -542,6 +542,7 @@ def _brent_scalar(
             fa, fb = fb, fa
 
     return b, max_iter, False
+
 
 def _brent_vectorised(
     func: Callable[[float], float],
