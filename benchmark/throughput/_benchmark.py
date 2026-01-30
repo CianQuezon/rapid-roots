@@ -10,7 +10,7 @@ from typing import Dict
 
 import numpy as np
 import numpy.typing as npt
-
+from tqdm import tqdm
 # Add parent directory to path for imports
 sys.path.append(str(Path(__file__).parent.parent))
 
@@ -60,7 +60,7 @@ def run_benchmark_functions_throughput(problem_size: list[int] = [10_000, 100_00
     func_dict = get_function_by_name(name='lambert_w_equation')
 
     results = {}
-    for n_problem_samples in problem_size:
+    for n_problem_samples in tqdm(problem_size, desc="Solving Problem Sizes: "):
         
         params, a_bounds, b_bounds = generate_test_samples(func_dict=func_dict, n_samples=n_problem_samples, seed=seed)
         x0_values = (a_bounds + b_bounds)/2.0
