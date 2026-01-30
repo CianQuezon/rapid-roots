@@ -1,5 +1,5 @@
 """
-Benchmark code to measure throughput
+Benchmark code to measure solver throughput
 
 Author: Cian Quezon
 """
@@ -10,6 +10,7 @@ from typing import Dict
 
 import numpy as np
 import numpy.typing as npt
+
 # Add parent directory to path for imports
 sys.path.append(str(Path(__file__).parent.parent))
 
@@ -76,7 +77,7 @@ def run_benchmark_functions_throughput(problem_size: list[int] = [10_000, 100_00
             'bisect': {**bisect_results}
         }
     
-    print(results)
+    return results
 
 def _benchmark_rapid_roots_newton_throughput(func_dict: Dict, params: npt.NDArray, x0_values: npt.NDArray, n_problem_samples: int, n_samples: int = 10,
                                              n_warmup: int = 3):
