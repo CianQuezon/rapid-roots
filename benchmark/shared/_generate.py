@@ -1,16 +1,19 @@
 """
 Generates the required data for benchmarks
 """
+
 from typing import Dict
 
 import numpy as np
 import numpy.typing as npt
 
-def generate_test_samples(func_dict: Dict, n_samples: int = 50,
-                          seed: int = 42) -> tuple[npt.NDArray, npt.NDArray]:
+
+def generate_test_samples(
+    func_dict: Dict, n_samples: int = 50, seed: int = 42
+) -> tuple[npt.NDArray, npt.NDArray]:
     """
     Generate random test samples for functions
-    
+
     Parameters
     ----------
     func_dict : dict
@@ -19,7 +22,7 @@ def generate_test_samples(func_dict: Dict, n_samples: int = 50,
         Number of samples to generate
     seed : int
         Random seed for reproducibility
-    
+
     Returns
     -------
     params : ndarray, shape (n_samples, n_params)
@@ -31,14 +34,14 @@ def generate_test_samples(func_dict: Dict, n_samples: int = 50,
     """
     np.random.seed(seed)
 
-    params_range = func_dict['params_range']
+    params_range = func_dict["params_range"]
     n_params = len(params_range)
 
     params = np.zeros((n_samples, n_params))
     for i, (min_val, max_val) in enumerate(params_range):
         params[:, i] = np.random.uniform(min_val, max_val, n_samples)
-    
-    bounds = func_dict['bounds']
+
+    bounds = func_dict["bounds"]
     if isinstance(bounds, tuple):
         a_bounds = np.full(n_samples, bounds[0])
         b_bounds = np.full(n_samples, bounds[1])
