@@ -9,8 +9,7 @@ Parallel Vectorised root solver using Numba for large data volumes.
 ## Quick Start
 ```bash
 pip install rapid-roots
-
-
+```
 
 ![alt text](benchmark/generated/plots/error_distribution_boxplot.png)
 
