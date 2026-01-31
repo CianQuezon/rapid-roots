@@ -46,7 +46,9 @@ roots, iters, converged = RootSolvers.get_root(
 print(f"Solved {converged.sum()} problems") # Solved 10,000 problems
 print(f"Mean root: {roots.mean()}")         # Mean root: 2.0
 ```
-
+## Performance
 ![alt text](benchmark/generated/plots/error_distribution_boxplot.png)
 
+
+## Accuracy
 ![alt text](benchmark/generated/plots/method_throughput_line_plot.png)
