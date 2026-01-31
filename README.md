@@ -11,6 +11,12 @@ Parallel Vectorised root solver using Numba for large data volumes.
 pip install rapid-roots
 ```
 
+```python
+
+from rapid-roots.solver import 
+
+```
+
 ![alt text](benchmark/generated/plots/error_distribution_boxplot.png)
 
 ![alt text](benchmark/generated/plots/method_throughput_line_plot.png)
