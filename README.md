@@ -49,5 +49,11 @@ print(f"Mean root: {roots.mean()}")         # Mean root: 2.0
 ## Performance
 ![alt text](benchmark/generated/plots/method_throughput_line_plot.png)
 
+| Column A | Column B | Column C |
+|----------|----------|----------|
+| Row 1    | Value 1  | Value 2  |
+| Row 2    | Value 3  | Value 4  |
+
+
 ## Accuracy
 ![alt text](benchmark/generated/plots/error_distribution_boxplot.png)
