@@ -49,10 +49,10 @@ print(f"Mean root: {roots.mean()}")         # Mean root: 2.0
 ## Performance
 ![alt text](benchmark/generated/plots/method_throughput_line_plot.png)
 
-| Column A | Column B | Column C |
+| Solvers | 10K | 100K | 1M | 10M
 |----------|----------|----------|
-| Row 1    | Value 1  | Value 2  |
-| Row 2    | Value 3  | Value 4  |
+| Row 1    | Value 1  | Value 2  | Value 5 | Value 7 |
+| Row 2    | Value 3  | Value 4  | Value 6 | Value 8 |
 
 
 ## Accuracy
