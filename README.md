@@ -12,7 +12,7 @@ pip install rapid-roots
 ```
 
 ```python
-from rapid_roots.solvers import RootSolver
+from rapid_roots.solvers import RootSolvers
 from numba import njit
 import numpy as np
 
@@ -25,22 +25,26 @@ def f_prime(x, a):
     return 2*x
 
 
-# Solves 10,000 problems at once
+# Creates function parameter a in the equation.
 params = np.full((1000, 1), 4.0)
 
 
-# Creates a and b boundsfor backup bracketed solvers
+# Creates a and b bounds for backup bracketed solvers
 a = np.zeros(10000)
 b = np.full(10000, 10.0)
 
 # Creates x0 initial guess for main Newton solver
 x0 = (a + b) / 2
 
-
+# Vectorised solver implementation solves 10,000 problems at once.
 roots, iters, converged = RootSolvers.get_root(
-    func=f, a=a,  b=b, x0=x0, func_prime=f_prime, func_params=params, main_solver='newton', use_backup=True 
+    func=f, a=a,  b=b, x0=x0, func_prime=f_prime, 
+    func_params=params, main_solver='newton', 
+    use_backup=True 
 )
 
+print(f"Solved {converged.sum()} problems") # Solved 10,000 problems
+print(f"Mean root: {roots.mean()}")         # Mean root: 2.0
 ```
 
 ![alt text](benchmark/generated/plots/error_distribution_boxplot.png)
