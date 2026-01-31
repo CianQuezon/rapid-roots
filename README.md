@@ -47,8 +47,7 @@ print(f"Solved {converged.sum()} problems") # Solved 10,000 problems
 print(f"Mean root: {roots.mean()}")         # Mean root: 2.0
 ```
 ## Performance
-![alt text](benchmark/generated/plots/error_distribution_boxplot.png)
-
+![alt text](benchmark/generated/plots/method_throughput_line_plot.png)
 
 ## Accuracy
-![alt text](benchmark/generated/plots/method_throughput_line_plot.png)
+![alt text](benchmark/generated/plots/error_distribution_boxplot.png)
