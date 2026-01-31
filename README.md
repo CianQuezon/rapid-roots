@@ -26,7 +26,7 @@ def f_prime(x, a):
 
 
 # Creates function parameter a in the equation.
-params = np.full((1000, 1), 4.0)
+params = np.full((10000, 1), 4.0)
 
 
 # Creates a and b bounds for backup bracketed solvers
