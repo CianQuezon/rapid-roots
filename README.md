@@ -49,47 +49,46 @@ print(f"Mean root: {roots.mean()}")         # Mean root: 2.0
 ## Performance
 ![alt text](benchmark/generated/plots/method_throughput_line_plot.png)
 
-<table style="width:100%;">
+<table width="100%" align="center">
   <thead>
     <tr>
-      <th>Samples</th>
-      <th colspan="3">Throughput (Solves/sec)</th>
+      <th align="center">Samples</th>
+      <th colspan="3" align="center">Throughput (Solves/sec)</th>
     </tr>
     <tr>
       <th></th>
-      <th>Brent</th>
-      <th>Newton</th>
-      <th>Bisection</th>
+      <th align="center">Brent</th>
+      <th align="center">Newton</th>
+      <th align="center">Bisection</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td>10K</td>
-      <td>19632</td>
-      <td>194212</td>
-      <td>Value 5</td>
+      <td align="center">10K</td>
+      <td align="center">19632</td>
+      <td align="center">194212</td>
+      <td align="center">Value 5</td>
     </tr>
     <tr>
-      <td>100K</td>
-      <td>19632</td>
-      <td>194212</td>
-      <td>Value 5</td>
+      <td align="center">100K</td>
+      <td align="center">19632</td>
+      <td align="center">194212</td>
+      <td align="center">Value 5</td>
     </tr>
     <tr>
-      <td>1M</td>
-      <td>19632</td>
-      <td>194212</td>
-      <td>Value 5</td>
+      <td align="center">1M</td>
+      <td align="center">19632</td>
+      <td align="center">194212</td>
+      <td align="center">Value 5</td>
     </tr>
     <tr>
-      <td>10M</td>
-      <td>19632</td>
-      <td>194212</td>
-      <td>Value 5</td>
+      <td align="center">10M</td>
+      <td align="center">19632</td>
+      <td align="center">194212</td>
+      <td align="center">Value 5</td>
     </tr>
   </tbody>
 </table>
-
 
 ## Accuracy
 ![alt text](benchmark/generated/plots/error_distribution_boxplot.png)
