@@ -56,13 +56,7 @@ print(f"Mean root: {roots.mean()}")         # Mean root: 2.0
 
 
 
-|     10K     |   19632   | 194212  | Value 5 | Value 7 |
 
-
-
-|     100K    |   23219  | 219248  | Value 6 | Value 8 |
-|     1M      |   22951  | 231065  | Value 6 | Value 8 |
-|     10M                  |   22951  | 231065  | Value 6 | Value 8 |
 
 ## Accuracy
 ![alt text](benchmark/generated/plots/error_distribution_boxplot.png)
