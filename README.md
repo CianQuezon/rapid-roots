@@ -49,7 +49,7 @@ print(f"Mean root: {roots.mean()}")         # Mean root: 2.0
 ## Performance
 ![alt text](benchmark/generated/plots/method_throughput_line_plot.png)
 
-<table>
+<table style="width:100%; text-align:center;">
   <thead>
     <tr>
       <th>Samples</th>
