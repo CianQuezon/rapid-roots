@@ -52,7 +52,6 @@ print(f"Mean root: {roots.mean()}")         # Mean root: 2.0
 |   Samples   |      Throughput (Solves/sec)   |
 |-------------|----------|---------|-----------|
 |             |   Brent  | Newton  | Bisection |
-|----------------------------------------------|
 
 
 
