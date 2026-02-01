@@ -49,13 +49,26 @@ print(f"Mean root: {roots.mean()}")         # Mean root: 2.0
 ## Performance
 ![alt text](benchmark/generated/plots/method_throughput_line_plot.png)
 
-|   Samples   |      Throughput (Solves/sec)   |
-|-------------|----------|---------|-----------|
-|             |   Brent  | Newton  | Bisection |
-
-
-
-
+<table>
+  <thead>
+    <tr>
+      <th>Samples</th>
+      <th colspan="3">Throughput (Solves/sec)</th>
+    </tr>
+    <tr>
+      <th></th>
+      <th>Brent</th>
+      <th>Newton</th>
+      <th>Bisection</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>10K</td><td>19632</td><td>194212</td><td>Value 5</td></tr>
+    <tr><td>100K</td><td>19632</td><td>194212</td><td>Value 5</td></tr>
+    <tr><td>1M</td><td>19632</td><td>194212</td><td>Value 5</td></tr>
+    <tr><td>10M</td><td>19632</td><td>194212</td><td>Value 5</td></tr>
+  </tbody>
+</table>
 
 
 ## Accuracy
