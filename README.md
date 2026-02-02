@@ -6,6 +6,30 @@
 
 General parallel vectorised root solver using Numba for large data volumes. 
 
+## Problem
+
+Open source root-finding libraries like Scipy requires users to processes problems sequentially.
+
+```python
+# Sequential approach (Slow)
+for i in range(1_000_000):
+    root = scipy.optimize.brentq(func, a[i], b[i], args=(params[i],))
+```
+## Soluton
+
+rapid-roots processes all problems at one using vectorisation and parallelisation.
+
+```python
+
+# Vectorised rapid-roots approach 
+roots, iters, converged = RootSolvers.get_root(
+    func, a, b, func_params=func_params, main_solver='brent', use_backup=False
+)
+
+
+
+```
+
 ## Quick Start
 ```bash
 pip install rapid-roots
@@ -47,7 +71,7 @@ print(f"Solved {converged.sum()} problems") # Solved 10,000 problems
 print(f"Mean root: {roots.mean()}")         # Mean root: 2.0
 ```
 ## Performance
-![alt text](benchmark/generated/plots/method_throughput_line_plot.png)
+![Throughput Scaling](benchmark/generated/plots/method_throughput_line_plot.png)
 
 <table width="100%" align="center">
   <thead>
@@ -91,11 +115,11 @@ print(f"Mean root: {roots.mean()}")         # Mean root: 2.0
 </table>
 
 ## Accuracy
-![alt text](benchmark/generated/plots/error_distribution_boxplot.png)
+![Error Distribution Boxplot](benchmark/generated/plots/error_distribution_boxplot.png)
 
 Box plot compares the absolute error distributions against Scipy for Brent, Bisection and Newton implementation across different function categories.
 
-Newton shows the lowest median error with occasinal ouliers in challenging categories. Brent is slightly higher in median errors with a wider interquantile range. Meanwhile Bisection displays the largest spread and highest typical error.
+Newton shows the lowest median error with occasional ouliers in challenging categories. Brent is slightly higher in median errors with a wider interquantile range. Meanwhile Bisection displays the largest spread and highest typical error.
 
 Results show errors approach machine precision for all methods against scipy.
 
