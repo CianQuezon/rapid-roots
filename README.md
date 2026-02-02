@@ -57,35 +57,35 @@ print(f"Mean root: {roots.mean()}")         # Mean root: 2.0
     </tr>
     <tr>
       <th></th>
-      <th align="center">Brent</th>
       <th align="center">Newton</th>
+      <th align="center">Brent</th>
       <th align="center">Bisection</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <td align="center">10K</td>
-      <td align="center">19632</td>
-      <td align="center">194212</td>
-      <td align="center">Value 5</td>
+      <td align="center">22,951</td>
+      <td align="center">19,632</td>
+      <td align="center">23,219</td>
     </tr>
     <tr>
       <td align="center">100K</td>
-      <td align="center">19632</td>
-      <td align="center">194212</td>
-      <td align="center">Value 5</td>
+      <td align="center">231,065</td>
+      <td align="center">194,212</td>
+      <td align="center">219,248</td>
     </tr>
     <tr>
       <td align="center">1M</td>
-      <td align="center">19632</td>
-      <td align="center">194212</td>
-      <td align="center">Value 5</td>
+      <td align="center">2,187,503</td>
+      <td align="center">1,787,564</td>
+      <td align="center">1,566,471</td>
     </tr>
     <tr>
       <td align="center">10M</td>
-      <td align="center">19632</td>
-      <td align="center">194212</td>
-      <td align="center">Value 5</td>
+      <td align="center">15,404,269</td>
+      <td align="center">9,486,609</td>
+      <td align="center">4,589,518</td>
     </tr>
   </tbody>
 </table>
