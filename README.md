@@ -176,5 +176,5 @@ This project is licensed under the MIT License - see the LICENSE file for more d
 
 ## Acknowledgements
 
-- Built with [Numba] (https://numba.pydata.org/)
+- Built with [Numba](https://numba.pydata.org/)
 - Validated against [Scipy](https://scipy.org/) reference implementations 
