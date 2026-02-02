@@ -1,7 +1,7 @@
 # Rapid-Roots
 
 [![PyPI version](https://badge.fury.io/py/rapid-roots.svg)](https://badge.fury.io/py/rapid-roots)
-[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
+[![Python 3.9+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 General parallel vectorised root solver using Numba for large data volumes. 
@@ -149,4 +149,32 @@ Newton shows the lowest median error with occasional ouliers in challenging cate
 
 Results show errors approach machine precision for all methods against scipy.
 
+## Installation
 
+### Requirements
+
+- Python ≥ 3.8
+- Numpy ≥ 1.20.0
+- Numba ≥ 0.56.0
+
+### Install from PyPI
+```bash
+pip install rapid-roots
+```
+
+### Install from source 
+```bash
+git clone https://github.com/CianQuezon/rapid-roots.git
+cd rapid-roots
+pip install -e .
+```
+
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for more details.
+
+## Acknowledgements
+
+- Built with [Numba] (https://numba.pydata.org/)
+- Validated against [Scipy](https://scipy.org/) reference implementations 
