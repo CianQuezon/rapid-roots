@@ -6,6 +6,8 @@
 
 General parallel vectorised root solver using Numba for large data volumes. 
 
+---
+
 ## Problem
 
 Open source root-finding libraries like Scipy requires users to processes problems sequentially.
@@ -15,9 +17,12 @@ Open source root-finding libraries like Scipy requires users to processes proble
 for i in range(1_000_000):
     root = scipy.optimize.brentq(func, a[i], b[i], args=(params[i],))
 ```
-## Soluton
 
-rapid-roots processes all problems at one using vectorisation and parallelisation.
+---
+
+## Solution
+
+rapid-roots processes all problems at once using vectorisation and parallelisation.
 
 ```python
 
@@ -26,9 +31,8 @@ roots, iters, converged = RootSolvers.get_root(
     func, a, b, func_params=func_params, main_solver='brent', use_backup=False
 )
 
-
-
 ```
+---
 
 ## Quick Start
 ```bash
@@ -70,6 +74,36 @@ roots, iters, converged = RootSolvers.get_root(
 print(f"Solved {converged.sum()} problems") # Solved 10,000 problems
 print(f"Mean root: {roots.mean()}")         # Mean root: 2.0
 ```
+---
+
+## API Reference
+
+### `RootSolvers.get_root()`
+
+Main interface for vectorized root finding.
+
+```python
+roots, iterations, converged = RootSolvers.get_root(
+    func=func,              # Numba JIT-compiled function
+    a=None,                 # Lowerbound brackets for bracketing methods
+    b=None,                 # Upperbound brackets for bracketing methods
+    x0=None,                # Initial guess for open methods (Newton)
+    func_prime=None,        # Derivatives for open method (Newton)
+    func_params=None,       # Parameters Array (n_problems, n_params)
+    main_solver='brent',    # 'brent', 'bisection', or 'newton'
+    tol=1e-12,              # Convergence tolerance
+    max_iter=100,           # Maximum iteration
+    use_backup=True,        # Enables automatic fallback
+    backup_solvers=['newton', 'bisection']  # Fallback methods for unconverged problems
+)
+```
+**Returns:**
+- `roots`: ndArray - Found roots for each problem
+- `iterations`: ndArray - Number of iterations used
+- `converged`: ndArray (bool) - Convergence status for each problem
+
+---
+
 ## Performance
 ![Throughput Scaling](benchmark/generated/plots/method_throughput_line_plot.png)
 
@@ -113,6 +147,8 @@ print(f"Mean root: {roots.mean()}")         # Mean root: 2.0
     </tr>
   </tbody>
 </table>
+
+---
 
 ## Accuracy
 ![Error Distribution Boxplot](benchmark/generated/plots/error_distribution_boxplot.png)
