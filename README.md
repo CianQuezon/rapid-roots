@@ -92,3 +92,11 @@ print(f"Mean root: {roots.mean()}")         # Mean root: 2.0
 
 ## Accuracy
 ![alt text](benchmark/generated/plots/error_distribution_boxplot.png)
+
+Box plot compares the absolute error distributions against Scipy for Brent, Bisection and Newton solvers across different function categories.
+
+Newton shows the lowest median error. It often approaches machine precision but exhibits occosinal ouliers in challenging categories.
+
+Brent is slightly higher in median errors with a wider interquantile range, showing its robustness at the expense of precsion.
+
+Meanwhile Bisection displays the largest spread and highest typical error accross all categories.
