@@ -97,7 +97,7 @@ roots, iterations, converged = RootSolvers.get_root(
 - `converged`: ndArray (bool) - Convergence status for each problem
 
 ## Performance
-![Throughput Scaling](benchmark/generated/plots/method_throughput_line_plot.png)
+![Throughput Scaling](https://github.com/CianQuezon/rapid-roots/blob/main/benchmark/generated/plots/method_throughput_line_plot.png?raw=true)
 
 <table width="100%" align="center">
   <thead>
@@ -141,7 +141,7 @@ roots, iterations, converged = RootSolvers.get_root(
 </table>
 
 ## Accuracy
-![Error Distribution Boxplot](benchmark/generated/plots/error_distribution_boxplot.png)
+![Error Distribution Boxplot](https://github.com/CianQuezon/rapid-roots/blob/main/benchmark/generated/plots/error_distribution_boxplot.png?raw=true)
 
 Box plot compares the absolute error distributions against Scipy for Brent, Bisection and Newton implementation across different function categories.
 
