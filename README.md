@@ -6,8 +6,6 @@
 
 General parallel vectorised root solver using Numba for large data volumes. 
 
----
-
 ## Problem
 
 Open source root-finding libraries like Scipy requires users to processes problems sequentially.
@@ -17,8 +15,6 @@ Open source root-finding libraries like Scipy requires users to processes proble
 for i in range(1_000_000):
     root = scipy.optimize.brentq(func, a[i], b[i], args=(params[i],))
 ```
-
----
 
 ## Solution
 
@@ -32,7 +28,6 @@ roots, iters, converged = RootSolvers.get_root(
 )
 
 ```
----
 
 ## Quick Start
 ```bash
@@ -74,7 +69,6 @@ roots, iters, converged = RootSolvers.get_root(
 print(f"Solved {converged.sum()} problems") # Solved 10,000 problems
 print(f"Mean root: {roots.mean()}")         # Mean root: 2.0
 ```
----
 
 ## API Reference
 
@@ -101,8 +95,6 @@ roots, iterations, converged = RootSolvers.get_root(
 - `roots`: ndArray - Found roots for each problem
 - `iterations`: ndArray - Number of iterations used
 - `converged`: ndArray (bool) - Convergence status for each problem
-
----
 
 ## Performance
 ![Throughput Scaling](benchmark/generated/plots/method_throughput_line_plot.png)
@@ -147,8 +139,6 @@ roots, iterations, converged = RootSolvers.get_root(
     </tr>
   </tbody>
 </table>
-
----
 
 ## Accuracy
 ![Error Distribution Boxplot](benchmark/generated/plots/error_distribution_boxplot.png)
