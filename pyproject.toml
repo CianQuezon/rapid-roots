@@ -87,7 +87,7 @@ Issues = "https://github.com/CianQuezon/rapid-roots/issues"
 Changelog = "https://github.com/CianQuezon/rapid-roots/releases"
 
 [tool.setuptools]
-packages = ["rapid_roots", "rapid_roots.solvers"]
+packages = ["rapid_roots", "rapid_roots.solvers", "rapid_roots.shared"]
 package-dir = {"" = "src"}
 
 [tool.setuptools.package-data]
