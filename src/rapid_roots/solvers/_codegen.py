@@ -4,6 +4,7 @@ Codegen function for vectorised solvers
 Author: Cian Quezon
 """
 
+import warnings
 from functools import lru_cache
 from typing import Callable, Union
 
@@ -13,6 +14,22 @@ from numba import njit, prange
 
 from rapid_roots.shared._enum_tools import parse_enum
 from rapid_roots.solvers._enums import MethodType
+
+# Number of distinct compiled specialisations a cached solver may hold before
+# a warning is raised. Numba compiles (and never releases) one specialisation
+# per distinct jitted function passed in, so a caller that builds a new @njit
+# function on every call recompiles each time and grows memory without bound.
+_MAX_SPECIALISATIONS = 32
+
+_SPECIALISATION_WARNING = (
+    "Many different jitted functions have been passed to this solver "
+    f"(more than {_MAX_SPECIALISATIONS}). Each new @njit function is compiled "
+    "again and kept in memory for the life of the process. Define the function "
+    "once and reuse it across calls."
+)
+
+# Solvers that have already triggered the warning, so each warns only once.
+_warned_solvers: set = set()
 
 
 def generate_vectorised_solver(
@@ -88,10 +105,21 @@ def generate_vectorised_solver(
     Generated solvers are cached per (scalar_func, num_params, method_type),
     so repeated calls return the same compiled function instead of
     regenerating and recompiling it.
+
+    A RuntimeWarning is raised (once per solver) when a cached solver holds more than
+    ``_MAX_SPECIALISATIONS`` compiled specialisations, which indicates the
+    caller is creating new jitted functions per call instead of reusing them.
+    This only warns; Numba does not release the compiled code.
     """
-    return _generate_cached(
+    solver = _generate_cached(
         scalar_func, num_params, parse_enum(method_type, MethodType)
     )
+
+    if len(solver.overloads) > _MAX_SPECIALISATIONS and solver not in _warned_solvers:
+        _warned_solvers.add(solver)
+        warnings.warn(_SPECIALISATION_WARNING, RuntimeWarning, stacklevel=2)
+
+    return solver
 
 
 @lru_cache(maxsize=None)
