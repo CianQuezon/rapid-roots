@@ -89,7 +89,9 @@ def generate_vectorised_solver(
     so repeated calls return the same compiled function instead of
     regenerating and recompiling it.
     """
-    return _generate_cached(scalar_func, num_params, parse_enum(method_type, MethodType))
+    return _generate_cached(
+        scalar_func, num_params, parse_enum(method_type, MethodType)
+    )
 
 
 @lru_cache(maxsize=None)
