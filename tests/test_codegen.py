@@ -4,11 +4,14 @@ Comprehensive unit tests for codegen vectorised solvers.
 Author: Cian Quezon
 """
 
+import warnings
+
 import numpy as np
 import pytest
 from numba import njit
 from scipy.optimize import brentq, newton
 
+import rapid_roots.solvers._codegen as codegen
 from rapid_roots.solvers._codegen import generate_vectorised_solver
 from rapid_roots.solvers._enums import MethodType
 from rapid_roots.solvers._jit_solvers import (
@@ -497,6 +500,74 @@ class TestCodegenPerformance:
         for i in sample_indices:
             expected = np.sqrt(params[i, 1] / params[i, 0])
             assert np.isclose(roots[i], expected, atol=1e-5)
+
+
+class TestCodegenSolverCache:
+    """Test solver caching and the specialisation warning."""
+
+    def test_repeat_call_returns_same_solver(self):
+        """Identical requests reuse one compiled solver."""
+        solver1 = generate_vectorised_solver(_brent_scalar, 1, MethodType.BRACKET)
+        solver2 = generate_vectorised_solver(_brent_scalar, 1, MethodType.BRACKET)
+
+        assert solver1 is solver2
+
+    def test_string_enum_and_keywords_share_one_solver(self):
+        """String/enum method types and keyword calls hit the same cache entry."""
+        by_enum = generate_vectorised_solver(_bisection_scalar, 2, MethodType.BRACKET)
+        by_string = generate_vectorised_solver(_bisection_scalar, 2, "bracket")
+        by_keyword = generate_vectorised_solver(
+            scalar_func=_bisection_scalar,
+            num_params=2,
+            method_type=MethodType.BRACKET,
+        )
+
+        assert by_enum is by_string
+        assert by_enum is by_keyword
+
+    def test_different_requests_get_different_solvers(self):
+        """Different parameter counts or scalar solvers are cached separately."""
+        one_param = generate_vectorised_solver(_brent_scalar, 1, MethodType.BRACKET)
+        two_params = generate_vectorised_solver(_brent_scalar, 2, MethodType.BRACKET)
+        bisection = generate_vectorised_solver(_bisection_scalar, 1, MethodType.BRACKET)
+
+        assert one_param is not two_params
+        assert one_param is not bisection
+
+    def test_warns_when_too_many_specialisations(self, monkeypatch):
+        """Exceeding the specialisation limit raises a RuntimeWarning."""
+
+        @njit
+        def f(x, a):
+            return x**2 - a
+
+        solver = generate_vectorised_solver(_brent_scalar, 1, MethodType.BRACKET)
+        solver(f, np.array([[4.0]]), np.array([0.0]), np.array([5.0]), 1e-6, 100)
+        assert len(solver.overloads) >= 1
+
+        monkeypatch.setattr(codegen, "_MAX_SPECIALISATIONS", 0)
+        monkeypatch.setattr(codegen, "_warned_solvers", set())
+
+        with pytest.warns(RuntimeWarning, match="Define the function once"):
+            warned_solver = generate_vectorised_solver(
+                _brent_scalar, 1, MethodType.BRACKET
+            )
+
+        assert warned_solver is solver
+
+        # The same solver warns only once
+        with warnings.catch_warnings():
+            warnings.simplefilter("error")
+            generate_vectorised_solver(_brent_scalar, 1, MethodType.BRACKET)
+
+    def test_no_warning_below_limit(self, monkeypatch):
+        """A solver under the specialisation limit does not warn."""
+        solver = generate_vectorised_solver(_brent_scalar, 1, MethodType.BRACKET)
+        monkeypatch.setattr(codegen, "_MAX_SPECIALISATIONS", len(solver.overloads) + 1)
+
+        with warnings.catch_warnings():
+            warnings.simplefilter("error")
+            generate_vectorised_solver(_brent_scalar, 1, MethodType.BRACKET)
 
 
 if __name__ == "__main__":
