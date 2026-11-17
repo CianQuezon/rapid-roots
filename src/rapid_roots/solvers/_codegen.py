@@ -4,6 +4,7 @@ Codegen function for vectorised solvers
 Author: Cian Quezon
 """
 
+from functools import lru_cache
 from typing import Callable, Union
 
 import numpy as np
@@ -81,11 +82,29 @@ def generate_vectorised_solver(
     ------
     ValueError
         If method_type is not MethodType.OPEN or MethodType.BRACKET.
+
+    Notes
+    -----
+    Generated solvers are cached per (scalar_func, num_params, method_type),
+    so repeated calls return the same compiled function instead of
+    regenerating and recompiling it.
     """
+    return _generate_cached(scalar_func, num_params, parse_enum(method_type, MethodType))
 
+
+@lru_cache(maxsize=None)
+def _generate_cached(
+    scalar_func: Callable[[float], float],
+    num_params: int,
+    method_type: MethodType,
+) -> Callable[[npt.ArrayLike], npt.NDArray[np.float64]]:
+    """
+    Build and cache the vectorised solver for `generate_vectorised_solver`.
+
+    Called positionally with a parsed MethodType so that equivalent requests
+    always share one cache entry.
+    """
     scalar_name = scalar_func.__name__
-
-    method_type = parse_enum(method_type, MethodType)
 
     if num_params > 0:
         param_names = ", ".join([f"p{i}" for i in range(num_params)])
