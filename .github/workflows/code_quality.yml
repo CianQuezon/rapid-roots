@@ -3,7 +3,7 @@ name: Code Quality
 on:
   pull_request:
   push:
-        branches: [main, master, 'features/**', 'WIP/**' ]
+        branches: [main, master, 'features/**', 'WIP/**', 'updates/**' ]
 
 jobs:
   lint:
@@ -27,4 +27,4 @@ jobs:
         with:
           python-version: '3.11'
       - run: pip install ruff
-      - run: ruff format --check .
+      - run: ruff format --check src/
