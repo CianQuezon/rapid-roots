@@ -218,8 +218,8 @@ class Solver(ABC):
 
         else:
             original_shape = a_arr.shape
-            a_flatten = a_arr.flatten()
-            b_flatten = b_arr.flatten()
+            a_flatten = a_arr.ravel()
+            b_flatten = b_arr.ravel()
 
             roots, iterations, converged_flags = vector_bracket_method_func(
                 func=func,
@@ -318,7 +318,7 @@ class Solver(ABC):
 
         else:
             original_shape = initial_guess_arr.shape
-            x0_flatten = initial_guess_arr.flatten()
+            x0_flatten = initial_guess_arr.ravel()
 
             if func_prime is not None:
                 roots, iterations, converged_flags = vectorised_open_method_func(
