@@ -95,6 +95,7 @@ rapid_roots = ["py.typed"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["src"]
 python_files = ["*_test.py", "test_*.py"]
 python_functions = ["test_*"]
 addopts = [
